@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Config>
+	<!--
+	このmodでは、クーロンの法則に従う磁性ブロックが追加される。
+	F = k * m1 * m2 / r^2
+	
+	This mod adds magnetic blocks that follows coulomb's law.
+	F = k * m1 * m2 / r^2
+	-->
+	
+	<!--
+	磁気に関するクーロン定数。
+	参考までに、地球のクーロン定数は6.33e+4。
+	
+	Coulomb constant in Besiege.
+	HINT: comlomb constant in the Earth is 6.33e+4.
+	-->
+	<CoulombConstant>100000</CoulombConstant>
+	
+	<!--
+	クーロンの法則が適用される磁性ブロックのマンハッタン距離の最大値。
+	計算量の増大を防ぐために設定。
+	この値より遠い距離にあるブロック同士の磁力は、計算されない。
+	F = 0 if MaxDistance < r
+	
+	We set Maximum Manhattan distance between two magnetic blocks that follows coulomb's law,
+	since we want to avoid the increase of complexity.
+	Magnetic forces between blocks farther apart than this value will not be calculated.
+	F = 0 if MaxDistance < r
+	-->
+	<MaxDistance>30</MaxDistance>
+</Config>

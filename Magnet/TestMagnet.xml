@@ -26,16 +26,17 @@
 	<Name>TestMagnet</Name>
 	
 	<!-- TODO: Change the mass to something appropriate -->
-	<Mass>0.3</Mass>
+	<Mass>0.5</Mass>
 	
 	<!-- Additional keywords that can be used to search for this block
 		 in the search tab of the block bar.
 		 
 		 Blocks can always be searched for by name and author,
 		 additional keywords can be specified here. -->
-	<!--<SearchKeywords>
-		<Keyword>Some Keyword</Keyword>
-	</SearchKeywords>-->
+	<SearchKeywords>
+		<Keyword>Mod</Keyword>
+		<Keyword>Magnet</Keyword>
+	</SearchKeywords>
 	
 	<!-- Optional.
 		 Only has an effect if the OnFlip method in the block script is not overriden.
@@ -57,16 +58,30 @@
 		 fallback, not modded blocks. -->
 	<!--<Fallback>DoubleWoodenBlock</Fallback>-->
 	
-	<!-- <Script>Full Name of a BlockScript class, optional.</Script> -->
-	
 	<!-- Blocks can have certain predefined behaviour added without any custom code.
 		 These behaviours are called modules.
 		 The Shooting, Spewing, Spinning, and Steering modules are included by default
 		 and mods can also add new modules.
 		 Check the documentation for more information on how to use modules. -->
-	<!--<Modules>
-	
-	</Modules>-->
+	<ModuleMapperTypes>
+		<Slider displayName="Charge" key="magnetic-charge" min="0.1" max="3.0" default="1.0" unclamped="false"/>
+		<Key    displayName="Magnetize" key="magnetize" default="M"/>
+		<Toggle displayName="Hold to Magnetize" key="hold-to-magnetize" default="true"/>
+	</ModuleMapperTypes>
+	<Modules>
+		<MagnetModule modid="ac980b9d-19dd-4de6-aca5-97219154ce48">
+			<PoleTransform>
+				<Position x="0.0" y="0.0" z="0.5" />
+				<Rotation x="0.0" y="0.0" z="0.0" />
+				<Scale x="1.0" y="1.0" z="1.0" />
+			</PoleTransform>
+			<Charge>0.1</Charge>
+
+			<SliderChargeGain key="magnetic-charge" />
+			<KeyMagnetize key="magnetize" />
+			<ToggleHoldToMagnetize key="hold-to-magnetize" />
+		</MagnetModule>
+	</Modules>
 	
 	<!-- Include to make block take damage. -->
 	<!-- <Health>20</Health> -->
@@ -97,13 +112,13 @@
 		 Can be one of "Blunt", "Sharp", "Fire" -->
 	<!-- <DamageType>Blunt</DamageType> -->
 	
-	<Mesh name="<!-- TODO: Insert mesh resource name here. -->"> <!-- Must be defined as a resource in the manifest. -->
-		<!--<Position x="0.0" y="0.0" z="0.0" />
+	<Mesh name="test-magnet"> <!-- Must be defined as a resource in the manifest. -->
+		<Position x="0.0" y="0.0" z="0.0" />
 		<Rotation x="0.0" y="0.0" z="0.0" />
-		<Scale x="1.0" y="1.0" z="1.0" /> -->
+		<Scale x="1.0" y="1.0" z="1.0" />
 	</Mesh>
 	
-	<Texture name="<!-- TODO: Insert texture resource name here. -->" /> <!-- Must be defined as a resource in the manifest. -->
+	<Texture name="thumbnail" />
 	
 	<Icon>
 		<Position x="0.0" y="0.0" z="0.0" />
@@ -145,10 +160,11 @@
 		<!-- TODO: Insert Collider definitions here.
 			 Examples: -->
 		<BoxCollider>
-			<Position x="0.0" y="0.0" z="0.0" />
+			<Position x="0.0" y="0.0" z="0.5" />
 			<Rotation x="0.0" y="0.0" z="0.0" />
-			<Scale x="1.0" y="1.0" z="1.0" />
+			<Scale x="0.8" y="0.8" z="0.8" />
 		</BoxCollider>
+		<!--
 		<SphereCollider>
 			<Position x="0.0" y="0.0" z="0.0" />
 			<Radius>1.0</Radius>
@@ -158,20 +174,23 @@
 			<Rotation x="0.0" y="0.0" z="0.0" />
 			<Capsule direction="X" radius="1.0" height="2.0" />
 		</CapsuleCollider>
+		-->
 	</Colliders>
 	
 	<BasePoint hasAddingPoint="false">
-		<Stickiness enabled="true" radius="0.6" />
+		<Stickiness enabled="true" radius="0.3" />
 		<!-- Can only have motion if sticky -->
 		<Motion x="false" y="false" z="false" /> <!-- Optional -->
 	</BasePoint>
 	
 	<AddingPoints>
 		<!-- TODO: Insert AddingPoint definitions here. Example:-->
+		<!--
 		<AddingPoint>
 			<Position x="0.0" y="0.0" z="0.0" />
 			<Rotation x="0.0" y="0.0" z="0.0" />
 			<Stickiness enabled="false" radius="0"/>
 		</AddingPoint>
+		-->
 	</AddingPoints>
 </Block>

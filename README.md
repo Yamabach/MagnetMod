@@ -53,7 +53,6 @@ public class Monopole : CustomModule, IMonopole
 - テスト用磁石
 - __天然磁石__ 常に磁性を持つ
 - __電磁石__ キー入力時に磁性を持つ
-- __磁力計__ 決められた磁力を検知するとエミュレートする
 
 ## Entities / エンティティ
 実装未定。
