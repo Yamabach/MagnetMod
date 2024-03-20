@@ -85,7 +85,9 @@ Add new magnet behaviours in Besiege.
 	<!-- Any blocks your mod adds to the game.
 		 The path attribute is relative to the location of this file. -->
 	<Blocks>
-		<Block path="TestMagnet.xml" /> <!-- 1 -->
+		<!-- <Block path="TestMagnet.xml" /> -->
+		<Block path="NaturalMagnet.xml" /> <!-- 10 -->
+		<Block path="Electromagnet.xml" /> <!-- 20 -->
 	</Blocks>
 	
 	<!-- Any entities (level objects) your mod adds to the game.

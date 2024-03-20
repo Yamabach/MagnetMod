@@ -20,10 +20,10 @@
 		 The ID must be unique among blocks in your mod.
 		 It may conflict with blocks of other mods, the mod loader handles this.
 		 The easiest way of assigning IDs is to use 1, 2, 3, etc.-->
-	<ID>1</ID>
+	<ID>10</ID>
 	
 	<!-- Name of the block, shown in the user interface. -->
-	<Name>TestMagnet</Name>
+	<Name>Magnet</Name>
 	
 	<!-- TODO: Change the mass to something appropriate -->
 	<Mass>0.5</Mass>
@@ -58,6 +58,8 @@
 		 fallback, not modded blocks. -->
 	<!--<Fallback>DoubleWoodenBlock</Fallback>-->
 	
+	<!-- <Script>Full Name of a BlockScript class, optional.</Script> -->
+	
 	<!-- Blocks can have certain predefined behaviour added without any custom code.
 		 These behaviours are called modules.
 		 The Shooting, Spewing, Spinning, and Steering modules are included by default
@@ -65,8 +67,6 @@
 		 Check the documentation for more information on how to use modules. -->
 	<ModuleMapperTypes>
 		<Slider displayName="Charge" key="magnetic-charge" min="0.1" max="3.0" default="1.0" unclamped="false"/>
-		<Key    displayName="Magnetize" key="magnetize" default="M"/>
-		<Toggle displayName="Hold to Magnetize" key="hold-to-magnetize" default="true"/>
 	</ModuleMapperTypes>
 	<Modules>
 		<MagnetModule modid="ac980b9d-19dd-4de6-aca5-97219154ce48">
@@ -90,9 +90,7 @@
 			</MeshSouth>
 			<TextureSouth name="natural-magne-s"/>
 
-			<SliderChargeGain key="magnetic-charge"/>
-			<KeyMagnetize key="magnetize"/>
-			<ToggleHoldToMagnetize key="hold-to-magnetize"/>
+			<SliderChargeGain key="magnetic-charge" />
 		</MagnetModule>
 	</Modules>
 	
@@ -124,15 +122,16 @@
 	<!-- Optionally specify type of damage done to entities.
 		 Can be one of "Blunt", "Sharp", "Fire" -->
 	<!-- <DamageType>Blunt</DamageType> -->
-	
-	<Mesh name="natural-magnet"> <!-- Must be defined as a resource in the manifest. -->
+
+	<Mesh name="natural-magnet">
+		<!-- Must be defined as a resource in the manifest. -->
 		<Position x="0.0" y="0.0" z="0.5" />
 		<Rotation x="0.0" y="0.0" z="0.0" />
 		<Scale x="0.5" y="0.5" z="0.5" />
 	</Mesh>
-	
+
 	<Texture name="natural-magnet-n" />
-	
+
 	<Icon>
 		<Position x="0.0" y="0.0" z="0.0" />
 		<Rotation x="0.0" y="0.0" z="0.0" />
@@ -168,42 +167,28 @@
 			</BoxCollider>
 		</Colliders>
 	</Ghost> -->
-	
+
 	<Colliders>
-		<!-- TODO: Insert Collider definitions here.
-			 Examples: -->
 		<BoxCollider>
 			<Position x="0.0" y="0.0" z="0.5" />
 			<Rotation x="0.0" y="0.0" z="0.0" />
 			<Scale x="0.8" y="0.8" z="0.8" />
 		</BoxCollider>
-		<!--
-		<SphereCollider>
-			<Position x="0.0" y="0.0" z="0.0" />
-			<Radius>1.0</Radius>
-		</SphereCollider>
-		<CapsuleCollider>
-			<Position x="0.0" y="0.0" z="0.0" />
-			<Rotation x="0.0" y="0.0" z="0.0" />
-			<Capsule direction="X" radius="1.0" height="2.0" />
-		</CapsuleCollider>
-		-->
 	</Colliders>
-	
+
 	<BasePoint hasAddingPoint="false">
 		<Stickiness enabled="true" radius="0.3" />
 		<!-- Can only have motion if sticky -->
-		<Motion x="false" y="false" z="false" /> <!-- Optional -->
+		<Motion x="false" y="false" z="false" />
+		<!-- Optional -->
 	</BasePoint>
 	
 	<AddingPoints>
 		<!-- TODO: Insert AddingPoint definitions here. Example:-->
-		<!--
 		<AddingPoint>
 			<Position x="0.0" y="0.0" z="0.0" />
 			<Rotation x="0.0" y="0.0" z="0.0" />
 			<Stickiness enabled="false" radius="0"/>
 		</AddingPoint>
-		-->
 	</AddingPoints>
 </Block>

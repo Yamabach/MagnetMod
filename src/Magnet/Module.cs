@@ -27,16 +27,16 @@ namespace MagnetSpace.Module
         public float Charge;
 
         #region visual property
-        [XmlElement]
+        [XmlElement("MeshNorth")]
         [Reloadable]
         public MeshReference MeshNorth;
-        [XmlElement]
+        [XmlElement("TextureNorth")]
         [Reloadable]
         public ResourceReference TextureNorth;
-        [XmlElement]
+        [XmlElement("MeshSouth")]
         [Reloadable]
         public MeshReference MeshSouth;
-        [XmlElement]
+        [XmlElement("TextureSouth")]
         [Reloadable]
         public ResourceReference TextureSouth;
         #endregion
