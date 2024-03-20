@@ -1,3 +1,4 @@
+using Modding;
 using UnityEngine;
 
 namespace MagnetSpace
@@ -44,5 +45,16 @@ namespace MagnetSpace
         /// Rigidbodyに対して力を与える
         /// </summary>
         void AddForce(Vector3 force);
+    }
+    /// <summary>
+    /// 複数の外観を持つブロック
+    /// </summary>
+    public interface IMultipleAppearance
+    {
+        BlockVisualController GetVisualController();
+        ModMesh LoadMesh();
+        ModTexture LoadTexture();
+        void SetMesh();
+        void SetTexture();
     }
 }

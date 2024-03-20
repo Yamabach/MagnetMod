@@ -9,26 +9,32 @@ namespace MagnetSpace
 {
 	public class Mod : ModEntryPoint
 	{
+        /// <summary>
+        /// Singletonの親
+        /// </summary>
+        private GameObject m_mod;
         #region singleton
         private MagnetManager m_magnetManager;
-        public MagnetManager MagnetManager => m_magnetManager;
+        private SkinLoader m_skinLoader;
         #endregion
         #region message
-        /// <summary>
-        /// 電磁石に通電した時にホストからクライアントに送られるメッセージ
-        /// </summary>
-        public static MessageType msgEnergize;
         #endregion
         public static List<string> PoleType;
 
         public override void OnLoad()
 		{
+            m_mod = new GameObject("Magnet Mod");
+
             // インスタンスの初期化
             m_magnetManager = SingleInstance<MagnetManager>.Instance;
             UnityEngine.Object.DontDestroyOnLoad(m_magnetManager);
             var config = XMLDeserializer.Deserialize("config.xml");
             m_magnetManager.Coulomb = config.CoulombConstant;
             m_magnetManager.MaxDistance = config.MaxDistance;
+            m_magnetManager.transform.parent = m_mod.transform;
+            m_skinLoader = SingleInstance<SkinLoader>.Instance;
+            UnityEngine.Object.DontDestroyOnLoad(m_skinLoader);
+            m_skinLoader.transform.parent = m_mod.transform;
 
             // pole typeの初期化
             PoleType = new List<string>
@@ -114,6 +120,7 @@ namespace MagnetSpace
                 //Mod.Warning("FixedUpdate was skipped!");
                 return;
             }
+            if (Monopoles is null || Monopoles.Count == 0) { return; }
 
             // それぞれのブロックに力をかける
             for (int i=0; i<Monopoles.Count; i++)
@@ -138,8 +145,13 @@ namespace MagnetSpace
             }
         }
     }
+    /// <summary>
+    /// Block module behaviour for magnet module.
+    /// </summary>
     public class Magnet : BlockModuleBehaviour<MagnetModule>, IMonopole
     {
+        public string BlockName => transform.name.Replace("(Clone)", "");
+        #region magnetic function
         protected Transform m_pole;
         protected MSlider m_sliderChargeGain;
         protected MKey m_keyMagnetize;
@@ -164,6 +176,20 @@ namespace MagnetSpace
         /// 磁性がある
         /// </summary>
         private bool m_isMagnetized;
+        #endregion
+        #region skin
+        private BlockVisualController m_vis;
+        private string m_skinName = SkinLoader.Instance.DefaultSkinName;
+        private string m_lastSkinName;
+        public string PathNorth => "north";
+        public string PathSouth => "south";
+        private SkinLoader.SkinDataPack.SkinData m_skinNorth;
+        private SkinLoader.SkinDataPack.SkinData m_skinSouth;
+        private bool m_isLoadingNorthSkin = false;
+        private bool m_isLoadingSouthSkin = false;
+        private bool m_hasChangedMesh = false;
+        private bool m_hasChangedTexture = false;
+        #endregion
 
         #region implementation of interface
         public bool IsMagnetized() => m_isMagnetized;
@@ -199,6 +225,102 @@ namespace MagnetSpace
             BlockBehaviour.Rigidbody.AddForceAtPosition(force, m_pole.position);
         }
         #endregion
+        public BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
+        public void SetSkin()
+        {
+            m_skinName = OptionsMaster.skinsEnabled ? m_vis.selectedSkin.pack.name : SkinLoader.Instance.DefaultSkinName;
+            
+            // スキンが変更された場合
+            if (m_skinName != m_lastSkinName || m_isLoadingNorthSkin || m_isLoadingSouthSkin)
+            {
+                m_lastSkinName = m_skinName;
+                m_isLoadingNorthSkin = true;
+                m_isLoadingSouthSkin = true;
+
+                var modSkins = SkinLoader.Instance.ModSkins;
+
+                // スキンが登録されていなければ登録する
+                if (!modSkins.ContainsKey(m_skinName))
+                {
+                    var skinPack = new SkinLoader.SkinDataPack();
+                    modSkins.Add(m_skinName, skinPack);
+                }
+                else
+                {
+                    if (modSkins[m_skinName].Skins.ContainsKey(BlockName))
+                    {
+                        m_skinNorth = modSkins[m_skinName].Skins[BlockName];
+                    }
+                    else
+                    {
+                        // スキンをスキンフォルダからロードする
+                        var skin = new SkinLoader.SkinDataPack.SkinData();
+                        if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                        {
+                            ModMesh modMesh = (ModMesh)GetResource(Module.MeshNorth);
+                            ModTexture modTexture = (ModTexture)GetResource(Module.TextureNorth);
+                            skin.SetDefaultSkin(modMesh, modTexture);
+                            m_skinNorth = skin;
+                        }
+                        else
+                        {
+                            var path = $"{m_vis.selectedSkin.pack.path}/{BlockName}/{PathNorth}/";
+                            var meshPath = $"{path}{BlockName}.obj";
+                            var texturePath = $"{path}{BlockName}.png";
+                            skin.SetSkin(BlockName, meshPath, texturePath);
+                            m_skinNorth = skin;
+                        }
+                        modSkins[m_skinName].Skins.Add(BlockName, skin);
+                    }
+                }
+            }
+
+            // スキンが変更されていない場合（毎フレーム呼び出し）
+            else
+            {
+                if (m_skinNorth == null)
+                {
+                    m_skinNorth = new SkinLoader.SkinDataPack.SkinData();
+                }
+
+                // デフォルトスキン
+                if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                {
+                    // 本体のスキンを適用する
+                    if (!m_hasChangedMesh && !m_hasChangedTexture)
+                    {
+                        //m_skinNorth.Mesh.ApplyToObject()
+                        m_vis.MeshFilter.mesh = m_skinNorth.Mesh;
+                        m_vis.renderers[0].material.mainTexture = m_skinNorth.Texture;
+
+                        m_hasChangedMesh = true;
+                        m_hasChangedTexture = true;
+                    }
+                }
+
+                // デフォルトでないスキン
+                else
+                {
+                    // 本体のスキンを適用する
+                    if (m_skinNorth.Mesh.IsLoaded && !m_hasChangedMesh)
+                    {
+                        m_hasChangedMesh = true;
+                        if (!m_skinNorth.Mesh.HasError)
+                        {
+                            m_vis.MeshFilter.mesh = m_skinNorth.Mesh;
+                        }
+                    }
+                    if (m_skinNorth.Texture.IsLoaded  && !m_hasChangedTexture)
+                    {
+                        m_hasChangedTexture = true;
+                        if (!m_skinNorth.Texture.HasError)
+                        {
+                            m_vis.renderers[0].material.mainTexture = m_skinNorth.Texture;
+                        }
+                    }
+                }
+            }
+        }
 
         #region event
         public override void SafeAwake()
@@ -241,6 +363,21 @@ namespace MagnetSpace
             m_pole.localEulerAngles = Module.PoleTransform.Rotation;
             m_pole.localScale = Module.PoleTransform.Scale;
             #endregion
+
+            #region スキン初期化
+            m_vis = GetVisualController();
+            #endregion
+        }
+        /// <summary>
+        /// 見た目を更新する（ビルド中）
+        /// </summary>
+        public override void BuildingFixedUpdate()
+        {
+            if (!m_vis)
+            {
+                m_vis = GetVisualController();
+            }
+            SetSkin();
         }
         /// <summary>
         /// MagnetManagerに自身を登録する
@@ -291,6 +428,17 @@ namespace MagnetSpace
             }
         }
         /// <summary>
+        /// 見た目を更新する（シミュ中）
+        /// </summary>
+        public override void SimulateFixedUpdateAlways()
+        {
+            if (!m_vis)
+            {
+                m_vis = GetVisualController();
+            }
+            SetSkin();
+        }
+        /// <summary>
         /// 自身が受ける力を計算してRigidbodyに与える
         /// </summary>
         public override void SimulateFixedUpdateHost()
@@ -326,6 +474,7 @@ namespace MagnetSpace
         {
             MagnetManager.Instance.Remove(this);
         }
+
         #endregion
     }
 }

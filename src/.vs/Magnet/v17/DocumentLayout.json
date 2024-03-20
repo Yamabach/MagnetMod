@@ -3,25 +3,29 @@
   "WorkspaceRootPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\besiege\\besiege_data\\mods\\magnet project\\src\\magnet\\mod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\magnet\\mod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|solutionrelative:magnet\\mod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Resources\\config.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\TestMagnet.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\besiege\\besiege_data\\mods\\magnet project\\src\\magnet\\skinloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|solutionrelative:magnet\\skinloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Mod.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\besiege\\besiege_data\\mods\\magnet project\\src\\magnet\\module.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|solutionrelative:magnet\\module.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\TestMagnet.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Resources\\config.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\besiege\\besiege_data\\mods\\magnet project\\src\\magnet\\interface.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\magnet\\interface.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|solutionrelative:magnet\\interface.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Mod.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,12 +34,25 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 216,
-          "SelectedChildIndex": 5,
+          "DockedWidth": 239,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
+              "Title": "SkinLoader.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\SkinLoader.cs",
+              "RelativeDocumentMoniker": "Magnet\\SkinLoader.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\SkinLoader.cs",
+              "RelativeToolTip": "Magnet\\SkinLoader.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAD0BAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-19T15:46:04.392Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "config.xml",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Resources\\config.xml",
               "RelativeDocumentMoniker": "..\\Magnet\\Resources\\config.xml",
@@ -48,41 +65,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "TestMagnet.xml",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\TestMagnet.xml",
               "RelativeDocumentMoniker": "..\\Magnet\\TestMagnet.xml",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\TestMagnet.xml",
               "RelativeToolTip": "..\\Magnet\\TestMagnet.xml",
-              "ViewState": "AQIAADAAAAAAAAAAAAAAADcAAAADAAAA",
+              "ViewState": "AQIAAGMAAAAAAAAAAAAAAHsAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
               "WhenOpened": "2024-03-17T07:31:28.38Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "Mod.xml",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Mod.xml",
               "RelativeDocumentMoniker": "..\\Magnet\\Mod.xml",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Mod.xml",
               "RelativeToolTip": "..\\Magnet\\Mod.xml",
-              "ViewState": "AQIAAGMAAAAAAAAAAAAAAH8AAAAEAAAA",
+              "ViewState": "AQIAAGYAAAAAAAAAAAAAAIEAAAAZAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
               "WhenOpened": "2024-03-17T07:31:25.578Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Interface.cs",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Interface.cs",
-              "RelativeDocumentMoniker": "Magnet\\Interface.cs",
-              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Interface.cs",
-              "RelativeToolTip": "Magnet\\Interface.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAADwvy0AAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-17T06:31:19.739Z",
               "EditorCaption": ""
             },
             {
@@ -93,7 +97,7 @@
               "RelativeDocumentMoniker": "Magnet\\Mod.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Mod.cs",
               "RelativeToolTip": "Magnet\\Mod.cs",
-              "ViewState": "AQIAAEYAAAAAAAAAAAAgwGoAAAAJAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACMAAAA/AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-17T06:14:46.896Z",
               "EditorCaption": ""
@@ -101,18 +105,31 @@
           ]
         },
         {
-          "DockedWidth": 184,
-          "SelectedChildIndex": 0,
+          "DockedWidth": 161,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
+              "Title": "Interface.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Interface.cs",
+              "RelativeDocumentMoniker": "Magnet\\Interface.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Interface.cs",
+              "RelativeToolTip": "Magnet\\Interface.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAADwvy8AAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-17T06:31:19.739Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "Module.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Module.cs",
               "RelativeDocumentMoniker": "Magnet\\Module.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Module.cs",
               "RelativeToolTip": "Magnet\\Module.cs",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAACYAAAAcAAAA",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAACoAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-17T06:20:37.285Z",
               "EditorCaption": ""

@@ -121,6 +121,22 @@ Add new magnet behaviours in Besiege.
 		<!-- <Texture name="some-texture-name" path="some_texture_file.png" /> -->
 		<Mesh name="test-magnet" path="test_magnet.obj" />
 		<Texture name="thumbnail" path="thumbnail.png" />
+		
+		<!-- 
+		Meshes and Textures of Blocks
+		Design & Texture: onion
+		Mesh: DynamiteOpanty
+		-->
+		<!-- natural magnet -->
+		<Mesh name="natural-magnet" path="naturalmagnet.obj"/>
+		<Texture name="natural-magnet-n" path="naturalmagnet_n.png"/>
+		<Texture name="natural-magnet-s" path="naturalmagnet_s.png"/>
+		
+		<!-- electromagnet -->
+		<Mesh name="electromagnet" path="electromagnet.obj"/>
+		<Texture name="electromagnet-off" path="electromagnet_off.png"/>
+		<Texture name="electromagnet-n" path="electromagnet_n.png"/>
+		<Texture name="electromagnet-s" path="electromagnet_s.png"/>
 	</Resources>
 
 
