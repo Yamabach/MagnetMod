@@ -3,15 +3,15 @@
   "WorkspaceRootPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\magnet\\mod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|solutionrelative:magnet\\mod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\besiege\\besiege_data\\mods\\magnet project\\src\\magnet\\module.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|solutionrelative:magnet\\module.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\besiege\\besiege_data\\mods\\magnet project\\src\\magnet\\skinloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\besiege\\besiege_data\\mods\\magnet project\\src\\magnet\\mod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|solutionrelative:magnet\\mod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\magnet\\skinloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B249DE7-2AD4-4134-974E-498C8C3418DC}|Magnet\\Magnet.csproj|solutionrelative:magnet\\skinloader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -50,8 +50,7 @@
               "RelativeToolTip": "..\\Magnet\\Electromagnet.xml",
               "ViewState": "AQIAAEIAAAAAAAAAAAAAAFcAAAAhAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2024-03-20T14:19:18.233Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-20T14:19:18.233Z"
             },
             {
               "$type": "Document",
@@ -63,8 +62,7 @@
               "RelativeToolTip": "..\\Magnet\\NaturalMagnet.xml",
               "ViewState": "AQIAADwAAAAAAAAAAAAAAE0AAAAXAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2024-03-20T14:19:17.4Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-20T14:19:17.4Z"
             },
             {
               "$type": "Document",
@@ -76,8 +74,7 @@
               "RelativeToolTip": "..\\Magnet\\Mod.xml",
               "ViewState": "AQIAAG4AAAAAAAAAAAAAAIQAAAAcAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2024-03-17T07:31:25.578Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-17T07:31:25.578Z"
             },
             {
               "$type": "Document",
@@ -89,8 +86,7 @@
               "RelativeToolTip": "..\\Magnet\\TestMagnet.xml",
               "ViewState": "AQIAAD8AAAAAAAAAAAAAAFIAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2024-03-17T07:31:28.38Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-17T07:31:28.38Z"
             },
             {
               "$type": "Document",
@@ -102,18 +98,17 @@
               "RelativeToolTip": "Magnet\\SkinLoader.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAEUAAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-19T15:46:04.392Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-19T15:46:04.392Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Mod.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Mod.cs",
               "RelativeDocumentMoniker": "Magnet\\Mod.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Mod.cs",
               "RelativeToolTip": "Magnet\\Mod.cs",
-              "ViewState": "AQIAAMoAAAAAAAAAAAAAADcCAAAVAAAA",
+              "ViewState": "AQIAAMYAAAAAAAAAAAAAwHICAAAWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-17T06:14:46.896Z",
               "EditorCaption": ""
@@ -134,18 +129,17 @@
               "RelativeToolTip": "Magnet\\Interface.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAC8AAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-17T06:31:19.739Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-17T06:31:19.739Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Module.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Module.cs",
               "RelativeDocumentMoniker": "Magnet\\Module.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Module.cs",
               "RelativeToolTip": "Magnet\\Module.cs",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAABwAAAAfAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAdAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-17T06:20:37.285Z",
               "EditorCaption": ""
