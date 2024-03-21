@@ -123,8 +123,12 @@ namespace MagnetSpace
                 }
                 else
                 {
-                    filter.mesh = Mesh;
+                    ApplyToObject(filter);
                 }
+            }
+            internal void ApplyToObject(MeshFilter filter)
+            {
+                filter.mesh = Mesh;
             }
             public void GetMeshFromObject(GameObject go)
             {
@@ -182,8 +186,12 @@ namespace MagnetSpace
                 }
                 else
                 {
-                    renderer.material.mainTexture = Texture;
+                    ApplyToObject(renderer);
                 }
+            }
+            internal void ApplyToObject(Renderer renderer)
+            {
+                renderer.material.mainTexture = Texture;
             }
             public void GetTextureFromObject(GameObject go)
             {
@@ -310,9 +318,14 @@ namespace MagnetSpace
                 return Localisation.LocalisationManager.Instance.GetTranslationById(781);
             }
         }
+        public Dictionary<string, SkinDataPack> modSkinsOff = new Dictionary<string, SkinDataPack>();
         /// <summary>
         /// N極のスキン
         /// </summary>
-        public Dictionary<string, SkinDataPack> ModSkins = new Dictionary<string, SkinDataPack>();
+        public Dictionary<string, SkinDataPack> ModSkinsNorth = new Dictionary<string, SkinDataPack>();
+        /// <summary>
+        /// S極のスキン
+        /// </summary>
+        public Dictionary<string, SkinDataPack> ModSkinsSouth = new Dictionary<string, SkinDataPack>();
     }
 }

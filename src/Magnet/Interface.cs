@@ -5,9 +5,9 @@ namespace MagnetSpace
 {
     public enum PoleType
     {
-        None   = -1,  // 磁性無し
-        North  = 0, // N極
-        South  = 1, // S極
+        None   = 0,  // 磁性無し
+        North  = 1,  // N極
+        South  = -1, // S極
     }
     /// <summary>
 	/// 単極子
@@ -45,16 +45,5 @@ namespace MagnetSpace
         /// Rigidbodyに対して力を与える
         /// </summary>
         void AddForce(Vector3 force);
-    }
-    /// <summary>
-    /// 複数の外観を持つブロック
-    /// </summary>
-    public interface IMultipleAppearance
-    {
-        BlockVisualController GetVisualController();
-        ModMesh LoadMesh();
-        ModTexture LoadTexture();
-        void SetMesh();
-        void SetTexture();
     }
 }
