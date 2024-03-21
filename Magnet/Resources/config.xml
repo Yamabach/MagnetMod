@@ -12,8 +12,8 @@
 	磁気に関するクーロン定数。
 	参考までに、地球のクーロン定数は6.33e+4。
 	
-	Coulomb constant in Besiege.
-	HINT: comlomb constant in the Earth is 6.33e+4.
+	Coulomb's constant in Besiege.
+	HINT: Coulomb's constant in the Earth is 6.33e+4.
 	-->
 	<CoulombConstant>100000</CoulombConstant>
 	
