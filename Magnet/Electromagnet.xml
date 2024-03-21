@@ -79,12 +79,18 @@
 			</PoleTransform>
 			<Charge>0.1</Charge>
 
+			<MeshOff name="electromagnet">
+				<Position x="0" y="0" z="0.5"/>
+				<Rotation x="0" y="0" z="0"/>
+				<Scale x="1" y="1" z="1" />
+			</MeshOff>
+			<TextureOff name="electromagnet-off"/>
 			<MeshNorth name="electromagnet">
 				<Position x="0" y="0" z="0.5"/>
 				<Rotation x="0" y="0" z="0"/>
 				<Scale x="1" y="1" z="1" />
 			</MeshNorth>
-			<TextureNorth name="electromagne-n"/>
+			<TextureNorth name="electromagnet-n"/>
 			<MeshSouth name="electromagnet">
 				<Position x="0" y="0" z="0.5"/>
 				<Rotation x="0" y="0" z="0"/>

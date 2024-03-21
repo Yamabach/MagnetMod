@@ -318,6 +318,7 @@ namespace MagnetSpace
                 return Localisation.LocalisationManager.Instance.GetTranslationById(781);
             }
         }
+        public Dictionary<string, SkinDataPack> modSkinsOff = new Dictionary<string, SkinDataPack>();
         /// <summary>
         /// N‹É‚ÌƒXƒLƒ“
         /// </summary>

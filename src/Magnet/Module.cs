@@ -27,6 +27,12 @@ namespace MagnetSpace.Module
         public float Charge;
 
         #region visual property
+        [XmlElement("MeshOff")]
+        [Reloadable]
+        public MeshReference MeshOff;
+        [XmlElement("TextureOff")]
+        [Reloadable]
+        public ResourceReference TextureOff;
         [XmlElement("MeshNorth")]
         [Reloadable]
         public MeshReference MeshNorth;

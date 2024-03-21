@@ -77,18 +77,24 @@
 			</PoleTransform>
 			<Charge>0.1</Charge>
 
+			<MeshOff name="natural-magnet">
+				<Position x="0" y="0" z="0.5"/>
+				<Rotation x="0" y="0" z="0"/>
+				<Scale x="1" y="1" z="1" />
+			</MeshOff>
+			<TextureOff name="natural-magnet-n"/>
 			<MeshNorth name="natural-magnet">
 				<Position x="0" y="0" z="0.5"/>
 				<Rotation x="0" y="0" z="0"/>
 				<Scale x="1" y="1" z="1" />
 			</MeshNorth>
-			<TextureNorth name="natural-magne-n"/>
+			<TextureNorth name="natural-magnet-n"/>
 			<MeshSouth name="natural-magnet">
 				<Position x="0" y="0" z="0.5"/>
 				<Rotation x="0" y="0" z="0"/>
 				<Scale x="1" y="1" z="1" />
 			</MeshSouth>
-			<TextureSouth name="natural-magne-s"/>
+			<TextureSouth name="natural-magnet-s"/>
 
 			<SliderChargeGain key="magnetic-charge" />
 		</MagnetModule>
