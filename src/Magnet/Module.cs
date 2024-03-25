@@ -26,13 +26,33 @@ namespace MagnetSpace.Module
         [Reloadable]
         public float Charge;
 
+        #region visual property
+        [XmlElement("MeshOff")]
+        [Reloadable]
+        public MeshReference MeshOff;
+        [XmlElement("TextureOff")]
+        [Reloadable]
+        public ResourceReference TextureOff;
+        [XmlElement("MeshNorth")]
+        [Reloadable]
+        public MeshReference MeshNorth;
+        [XmlElement("TextureNorth")]
+        [Reloadable]
+        public ResourceReference TextureNorth;
+        [XmlElement("MeshSouth")]
+        [Reloadable]
+        public MeshReference MeshSouth;
+        [XmlElement("TextureSouth")]
+        [Reloadable]
+        public ResourceReference TextureSouth;
+        #endregion
 
         #region mappers
         [XmlElement("SliderChargeGain")]
         [Reloadable]
         public MSliderReference SliderChargeGain;
 
-        #region ìdé•êŒ
+        #region ìdé•êŒ electromagnet
         [XmlElement("KeyMagnetize")]
         [Reloadable]
         [CanBeEmpty]

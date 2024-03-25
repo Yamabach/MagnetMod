@@ -1,12 +1,13 @@
+using Modding;
 using UnityEngine;
 
 namespace MagnetSpace
 {
     public enum PoleType
     {
-        None   = -1,  // é•ê´ñ≥Çµ
-        North  = 0, // Nã…
-        South  = 1, // Sã…
+        None   = 0,  // é•ê´ñ≥Çµ
+        North  = 1,  // Nã…
+        South  = -1, // Sã…
     }
     /// <summary>
 	/// íPã…éq
