@@ -302,6 +302,7 @@ namespace MagnetSpace
         /// </summary>
         public void SetSkin()
         {
+            //Mod.Log($"Set Skin test");
             m_skinName = OptionsMaster.skinsEnabled ? m_vis.selectedSkin.pack.name : SkinLoader.Instance.DefaultSkinName;
             //m_skinName = m_vis.selectedSkin.pack.name;
             var poleType = GetPoleType();
@@ -522,18 +523,25 @@ namespace MagnetSpace
                 }
                 #endregion
 
+                //Mod.Log("test2");
                 // デフォルトスキン
                 if (m_skinName == SkinLoader.Instance.DefaultSkinName)
                 {
+                    //Mod.Log("test3");
                     // 本体のスキンを適用する
                     if (!m_hasChangedMesh)
                     {
+                        //Mod.Log("test5");
                         GetModMesh(poleType).ApplyToObject(m_vis.MeshFilter);
                         m_hasChangedMesh = true;
                     }
                     if (!m_hasChangedTexture)
                     {
-                        GetModMesh(poleType).ApplyToObject(m_vis.MeshFilter);
+                        //Mod.Log("test6");
+                        //GetModMesh(poleType).ApplyToObject(m_vis.MeshFilter);
+                        //GetModTexture(poleType).ApplyToObject(m_vis.renderers[0]);
+                        var tex = GetModTexture(poleType);
+                        tex.ApplyToObject(m_renderer);
                         m_hasChangedTexture = true;
                     }
                 }
@@ -609,6 +617,7 @@ namespace MagnetSpace
 
             #region スキン初期化
             m_vis = GetVisualController();
+            m_renderer = m_vis.renderers[0];
             #endregion
         }
         /// <summary>

@@ -139,9 +139,9 @@
 	<Texture name="natural-magnet-n" />
 
 	<Icon>
-		<Position x="0.0" y="0.0" z="0.0" />
-		<Rotation x="0.0" y="0.0" z="0.0" />
-		<Scale x="0.5" y="0.5" z="0.5" />
+		<Position x="-0.05" y="-0.05" z="0.0" />
+		<Rotation x="-15.0" y="150.0" z="0.0" />
+		<Scale x="0.4" y="0.4" z="0.4" />
 	</Icon>
 	
 	<!-- Including this causes a direction arrow, like the one on wheels and other turnable blocks,
@@ -178,7 +178,7 @@
 		<BoxCollider>
 			<Position x="0.0" y="0.0" z="0.5" />
 			<Rotation x="0.0" y="0.0" z="0.0" />
-			<Scale x="0.8" y="0.8" z="0.8" />
+			<Scale x="0.7" y="0.7" z="0.95" />
 		</BoxCollider>
 	</Colliders>
 
