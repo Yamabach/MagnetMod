@@ -67,7 +67,8 @@
 		 Check the documentation for more information on how to use modules. -->
 	<ModuleMapperTypes>
 		<Slider displayName="Charge" key="magnetic-charge" min="0.1" max="3.0" default="1.0" unclamped="false"/>
-		<Key    displayName="Magnetize" key="magnetize" default="M"/>
+		<Key    displayName="Magnetize N" key="magnetize-north" default="N"/>
+		<Key    displayName="Magnetize S" key="magnetize-south" default="M"/>
 		<Toggle displayName="Hold to Magnetize" key="hold-to-magnetize" default="true"/>
 	</ModuleMapperTypes>
 	<Modules>
@@ -99,7 +100,8 @@
 			<TextureSouth name="electromagnet-s"/>
 
 			<SliderChargeGain key="magnetic-charge" />
-			<KeyMagnetize key="magnetize" />
+			<KeyMagnetizeNorth key="magnetize-north" />
+			<KeyMagnetizeSouth key="magnetize-south" />
 			<ToggleHoldToMagnetize key="hold-to-magnetize" />
 		</MagnetModule>
 	</Modules>

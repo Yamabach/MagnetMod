@@ -152,9 +152,26 @@ namespace MagnetSpace
     {
         public string BlockName => transform.name.Replace("(Clone)", "");
         #region magnetic function
+        /// <summary>
+        /// 極の位置
+        /// </summary>
         protected Transform m_pole;
+        /// <summary>
+        /// 磁気量の倍率
+        /// </summary>
         protected MSlider m_sliderChargeGain;
-        protected MKey m_keyMagnetize;
+        /// <summary>
+        /// N極を有効化するキー（電磁石）
+        /// </summary>
+        protected MKey m_keyMagnetizeNorth;
+        /// <summary>
+        /// S極を有効化するキー（電磁石）
+        /// </summary>
+        protected MKey m_keyMagnetizeSouth;
+        /// <summary>
+        /// 磁性を選択するメニュー（自然磁石）
+        /// </summary>
+        protected MMenu m_menuPoleType;
         /// <summary>
         /// m_keyEnergizeを押した場合の挙動
         /// 
@@ -162,21 +179,31 @@ namespace MagnetSpace
         /// falseなら磁化がトグル化する
         /// </summary>
         protected MToggle m_toggleHoldToMagnetize;
-        protected MMenu m_menuPoleType;
         /// <summary>
         /// このブロックが電磁石である
         /// （Module.KeyMagnetizeの有無により判断する）
         /// </summary>
         public bool IsElectromagnet
         {
-            private set;
-            get;
-        } = false;
+            get
+            {
+                return m_keyMagnetizeNorth != null || m_keyMagnetizeSouth != null;
+            }
+        }
         /// <summary>
-        /// 磁性がある
+        /// 現在の磁性
         /// </summary>
-        private bool m_isMagnetized;
+        private PoleType m_poleType = PoleType.None;
+        /// <summary>
+        /// 1F前の磁性（スキン用）
+        /// </summary>
         private PoleType m_lastPoleType = PoleType.None;
+        #endregion
+        #region emulation
+        private bool m_keyNorthEmulationHeld = false;
+        private bool m_keySouthEmulationHeld = false;
+        private bool m_keyNorthEmulationPressed = false;
+        private bool m_keySouthEmulationPressed = false;
         #endregion
         #region skin
         /// <summary>
@@ -240,37 +267,22 @@ namespace MagnetSpace
         #endregion
 
         #region implementation of interface
-        public bool IsMagnetized() => m_isMagnetized;
+        /// <summary>
+        /// 磁性がある（電磁石）
+        /// </summary>
+        /// <returns></returns>
+        public bool IsMagnetized()
+        {
+            var poleType = GetPoleType();
+            return poleType == PoleType.North || poleType == PoleType.South;
+        }
         /// <summary>
         /// PoleTypeを取得する
         /// 
         /// enum PoleType と Mod.PoleTypeのindexから取得する
         /// </summary>
         /// <returns></returns>
-        public PoleType GetPoleType()
-        {
-            var value = m_menuPoleType.Value; // 0=N 1=S
-            var pole = value == 0 ? PoleType.North : value == 1 ? PoleType.South : PoleType.None;
-
-            // 天然磁石の場合
-            if (!IsElectromagnet)
-            {
-                return pole;
-            }
-
-            // 電磁石の場合
-            // ビルド中はNかS
-            if (!BlockBehaviour.isSimulating)
-            {
-                return pole;
-            }
-            // シミュ中は起動時にNかS、そうでなければOff
-            if (m_isMagnetized)
-            {
-                return pole;
-            }
-            return PoleType.None;
-        }
+        public PoleType GetPoleType() => m_poleType;
         public Vector3 GetPolePosition() => m_pole.position;
         public float GetCharge() => Module.Charge * m_sliderChargeGain.Value * (int)GetPoleType();
         public Vector3 GetForce(IMonopole other)
@@ -302,76 +314,8 @@ namespace MagnetSpace
         /// </summary>
         public void SetSkin()
         {
-            //Mod.Log($"Set Skin test");
             m_skinName = OptionsMaster.skinsEnabled ? m_vis.selectedSkin.pack.name : SkinLoader.Instance.DefaultSkinName;
-            //m_skinName = m_vis.selectedSkin.pack.name;
             var poleType = GetPoleType();
-            /*
-            if (m_lastPoleType != poleType)
-            {
-                Mod.Log($"Pole type has changed from {m_lastPoleType} to {poleType}");
-
-                m_lastPoleType = poleType;
-
-                // スキンを変える
-                #region null回避
-                if (m_skinOff == null)
-                {
-                    m_skinOff = new SkinLoader.SkinDataPack.SkinData();
-                }
-                if (m_skinNorth == null)
-                {
-                    m_skinNorth = new SkinLoader.SkinDataPack.SkinData();
-                }
-                if (m_skinSouth == null)
-                {
-                    m_skinSouth = new SkinLoader.SkinDataPack.SkinData();
-                }
-                #endregion
-
-                // デフォルトスキン
-                if (m_skinName == SkinLoader.Instance.DefaultSkinName)
-                {
-                    // 本体のスキンを適用する
-                    if (!m_hasChangedMesh && !m_hasChangedTexture)
-                    {
-                        //GetModMesh(poleType).ApplyToObject(m_filter);
-                        GetModMesh(poleType).ApplyToObject(m_vis.MeshFilter);
-                        //GetModTexture(poleType).ApplyToObject(m_renderer);
-                        GetModTexture(poleType).ApplyToObject(m_vis.renderers[0]);
-                        Mod.Log($"poleType: {poleType}");
-
-                        m_hasChangedMesh = true;
-                        m_hasChangedTexture = true;
-                    }
-                }
-
-                // デフォルトでないスキン
-                else
-                {
-                    // 本体のスキンを適用する
-                    var mesh = GetModMesh(poleType);
-                    if (mesh.IsLoaded && !m_hasChangedMesh)
-                    {
-                        m_hasChangedMesh = true;
-                        if (!mesh.HasError)
-                        {
-                            mesh.ApplyToObject(m_filter);
-                        }
-                    }
-
-                    var tex = GetModTexture(poleType);
-                    if (tex.IsLoaded && !m_hasChangedTexture)
-                    {
-                        m_hasChangedTexture = true;
-                        if (!tex.HasError)
-                        {
-                            tex.ApplyToObject(m_renderer);
-                        }
-                    }
-                }
-            }
-            */
 
             // スキンが変更された場合またはスキンをロードしている最中の場合
             // m_skinOff m_skinNorth m_skinSouthを取得する
@@ -537,9 +481,6 @@ namespace MagnetSpace
                     }
                     if (!m_hasChangedTexture)
                     {
-                        //Mod.Log("test6");
-                        //GetModMesh(poleType).ApplyToObject(m_vis.MeshFilter);
-                        //GetModTexture(poleType).ApplyToObject(m_vis.renderers[0]);
                         var tex = GetModTexture(poleType);
                         tex.ApplyToObject(m_renderer);
                         m_hasChangedTexture = true;
@@ -572,6 +513,7 @@ namespace MagnetSpace
                 }
             }
         }
+        public ValueHandler OnMenuValueChanged;
 
         #region event
         public override void SafeAwake()
@@ -582,21 +524,32 @@ namespace MagnetSpace
             try
             {
                 if (Module.SliderChargeGain != null) { m_sliderChargeGain = GetSlider(Module.SliderChargeGain); }
-                if (IsElectromagnet = Module.KeyMagnetize != null)
+                
+                if (Module.KeyMagnetizeNorth != null)
                 {
-                    m_keyMagnetize = GetKey(Module.KeyMagnetize);
+                    m_keyMagnetizeNorth = GetKey(Module.KeyMagnetizeNorth);
+                }
+                if (Module.KeyMagnetizeSouth != null)
+                {
+                    m_keyMagnetizeSouth = GetKey(Module.KeyMagnetizeSouth);
+                }
+                if (IsElectromagnet)
+                {
                     if (Module.ToggleHoldToMagnetize != null)
                     {
                         m_toggleHoldToMagnetize = GetToggle(Module.ToggleHoldToMagnetize);
                     }
-                    m_isMagnetized = false;
                 }
                 else
                 {
                     // 電磁石ではないなら常に磁性がある
-                    m_isMagnetized = true;
+                    m_menuPoleType = AddMenu("pole-type", 0, Mod.PoleType);
+                    OnMenuValueChanged = (value) =>
+                    {
+                        m_poleType = value == 0 ? PoleType.North : value == 1 ? PoleType.South : PoleType.None;
+                    };
+                    m_menuPoleType.ValueChanged += OnMenuValueChanged;
                 }
-                m_menuPoleType = AddMenu("pole-type", 0, Mod.PoleType);
             }
             catch (Exception e)
             {
@@ -644,18 +597,42 @@ namespace MagnetSpace
         public override void SimulateUpdateAlways()
         {
             // 電磁石でないなら何もしない
-            if (!IsElectromagnet) { return; }
+            if (!IsElectromagnet)
+            {
+                return;
+            }
 
             // 押下時のみ磁化
-            if (m_toggleHoldToMagnetize.IsActive)
+            if (m_toggleHoldToMagnetize != null && m_toggleHoldToMagnetize.IsActive)
             {
-                m_isMagnetized = m_keyMagnetize.IsHeld;
+                //m_isMagnetized = m_keyMagnetize.IsHeld;
+                if ((m_keyMagnetizeNorth.IsHeld || m_keyNorthEmulationHeld) 
+                    && (m_keyMagnetizeSouth.IsHeld || m_keySouthEmulationHeld))
+                {
+                    m_poleType = PoleType.None;
+                }
+                else if (m_keyMagnetizeNorth.IsHeld || m_keyNorthEmulationHeld)
+                {
+                    m_poleType = PoleType.North;
+                }
+                else if (m_keyMagnetizeSouth.IsHeld || m_keySouthEmulationHeld)
+                {
+                    m_poleType = PoleType.South;
+                }
+                else
+                {
+                    m_poleType = PoleType.None;
+                }
             }
             else
             {
-                if (m_keyMagnetize.IsPressed)
+                if (m_keyMagnetizeNorth.IsPressed || m_keyNorthEmulationPressed)
                 {
-                    m_isMagnetized = !m_isMagnetized;
+                    m_poleType = (m_poleType == PoleType.North) ? PoleType.None : PoleType.North;
+                }
+                else if (m_keyMagnetizeSouth.IsPressed || m_keySouthEmulationPressed)
+                {
+                    m_poleType = (m_poleType == PoleType.South) ? PoleType.None : PoleType.South;
                 }
             }
         }
@@ -667,17 +644,10 @@ namespace MagnetSpace
             // 電磁石でないなら何もしない
             if (!IsElectromagnet) { return; }
 
-            if (m_toggleHoldToMagnetize.IsActive)
-            {
-                m_isMagnetized = m_keyMagnetize.EmulationHeld();
-            }
-            else
-            {
-                if (m_keyMagnetize.EmulationPressed())
-                {
-                    m_isMagnetized = !m_isMagnetized;
-                }
-            }
+            m_keyNorthEmulationHeld = m_keyMagnetizeNorth.EmulationHeld();
+            m_keySouthEmulationHeld = m_keyMagnetizeSouth.EmulationHeld();
+            m_keyNorthEmulationPressed = m_keyMagnetizeNorth.EmulationPressed();
+            m_keySouthEmulationPressed = m_keyMagnetizeSouth.EmulationPressed();
         }
         /// <summary>
         /// 見た目を更新する（シミュ中/ホスト）
