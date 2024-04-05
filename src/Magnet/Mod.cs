@@ -206,14 +206,6 @@ namespace MagnetSpace
         private bool m_keySouthEmulationPressed = false;
         #endregion
         #region skin
-        /// <summary>
-        /// MeshRenderer of m_filterNorth
-        /// </summary>
-        private MeshRenderer m_renderer;
-        /// <summary>
-        /// MeshFilter of m_filterNorth
-        /// </summary>
-        private MeshFilter m_filter;
         private BlockVisualController m_vis;
         private string m_skinName = SkinLoader.Instance.DefaultSkinName;
         private string m_lastSkinName = "";
@@ -467,22 +459,19 @@ namespace MagnetSpace
                 }
                 #endregion
 
-                //Mod.Log("test2");
                 // デフォルトスキン
                 if (m_skinName == SkinLoader.Instance.DefaultSkinName)
                 {
-                    //Mod.Log("test3");
                     // 本体のスキンを適用する
                     if (!m_hasChangedMesh)
                     {
-                        //Mod.Log("test5");
                         GetModMesh(poleType).ApplyToObject(m_vis.MeshFilter);
                         m_hasChangedMesh = true;
                     }
                     if (!m_hasChangedTexture)
                     {
                         var tex = GetModTexture(poleType);
-                        tex.ApplyToObject(m_renderer);
+                        tex.ApplyToObject(m_vis.renderers[0]);
                         m_hasChangedTexture = true;
                     }
                 }
@@ -494,21 +483,21 @@ namespace MagnetSpace
                     var mesh = GetModMesh(poleType);
                     if (mesh.IsLoaded && !m_hasChangedMesh)
                     {
-                        m_hasChangedMesh = true;
                         if (!mesh.HasError)
                         {
-                            mesh.ApplyToObject(m_filter);
+                            mesh.ApplyToObject(m_vis.MeshFilter);
                         }
+                        m_hasChangedMesh = true;
                     }
-
+                    
                     var tex = GetModTexture(poleType);
                     if (tex.IsLoaded && !m_hasChangedTexture)
                     {
-                        m_hasChangedTexture = true;
                         if (!tex.HasError)
                         {
-                            tex.ApplyToObject(m_renderer);
+                            tex.ApplyToObject(m_vis.renderers[0]);
                         }
+                        m_hasChangedTexture = true;
                     }
                 }
             }
@@ -570,7 +559,6 @@ namespace MagnetSpace
 
             #region スキン初期化
             m_vis = GetVisualController();
-            m_renderer = m_vis.renderers[0];
             #endregion
         }
         /// <summary>
