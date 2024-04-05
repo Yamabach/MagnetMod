@@ -51,7 +51,7 @@ namespace MagnetSpace
                 texture.Path = path;
                 texture.Type = ResourceType.Texture;
 
-                Instance.StartCoroutineAsync(texture.Load());
+                Instance.StartCoroutine(texture.Load());
                 return texture;
             }
             public static MagnetModMesh GetDefaultMesh(Mesh mesh)
@@ -113,6 +113,7 @@ namespace MagnetSpace
                     m_error = ex.ToString();
                     m_isLoaded = true;
                 }
+                //Mod.Log("MagnetModMesh.Load finish"); // ŒÄ‚Î‚ê‚Ä‚é
             }
             internal override void ApplyToObject(GameObject go)
             {
@@ -169,7 +170,7 @@ namespace MagnetSpace
             internal override IEnumerator Load()
             {
                 AssetImporter.LoadingObject loadingObject = AssetImporter.StartImport.Texture(Path, null, !Readable);
-
+                
                 yield return loadingObject.routine;
 
                 Texture = loadingObject.tex;
