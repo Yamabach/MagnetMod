@@ -53,11 +53,16 @@ namespace MagnetSpace.Module
         public MSliderReference SliderChargeGain;
 
         #region ìdé•êŒ electromagnet
-        [XmlElement("KeyMagnetize")]
+        [XmlElement("KeyMagnetizeNorth")]
         [Reloadable]
         [CanBeEmpty]
         [DefaultValue(null)]
-        public MKeyReference KeyMagnetize;
+        public MKeyReference KeyMagnetizeNorth;
+        [XmlElement("KeyMagnetizeSouth")]
+        [Reloadable]
+        [CanBeEmpty]
+        [DefaultValue(null)]
+        public MKeyReference KeyMagnetizeSouth;
         [XmlElement("ToggleHoldToMagnetize")]
         [Reloadable]
         [CanBeEmpty]
