@@ -187,19 +187,10 @@
 		</BoxCollider>
 	</Colliders>
 
-	<BasePoint hasAddingPoint="false">
+	<BasePoint hasAddingPoint="false" breakForce="55000">
 		<Stickiness enabled="true" radius="0.3" />
 		<!-- Can only have motion if sticky -->
 		<Motion x="false" y="false" z="false" />
 		<!-- Optional -->
 	</BasePoint>
-	
-	<AddingPoints>
-		<!-- TODO: Insert AddingPoint definitions here. Example:-->
-		<AddingPoint>
-			<Position x="0.0" y="0.0" z="0.0" />
-			<Rotation x="0.0" y="0.0" z="0.0" />
-			<Stickiness enabled="false" radius="0"/>
-		</AddingPoint>
-	</AddingPoints>
 </Block>
