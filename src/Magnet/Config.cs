@@ -49,5 +49,7 @@ namespace MagnetSpace
         public float CoulombConstant;
         [XmlElement("MaxDistance")]
         public float MaxDistance;
+        [XmlElement("MinDistance")]
+        public float MinDistance;
     }
 }

@@ -31,6 +31,7 @@ namespace MagnetSpace
             var config = XMLDeserializer.Deserialize("config.xml");
             m_magnetManager.Coulomb = config.CoulombConstant;
             m_magnetManager.MaxDistance = config.MaxDistance;
+            m_magnetManager.MinDistance = config.MinDistance;
             m_magnetManager.transform.parent = m_mod.transform;
             m_skinLoader = SingleInstance<SkinLoader>.Instance;
             UnityEngine.Object.DontDestroyOnLoad(m_skinLoader);
@@ -75,6 +76,14 @@ namespace MagnetSpace
         /// クーロンの法則が適用されるブロックのマンハッタン距離の最大値
         /// </summary>
         public float MaxDistance
+        {
+            set; get;
+        }
+        /// <summary>
+        /// クーロンの法則が適用されるブロックのユークリッド距離の最小値
+        /// これより小さい距離なら、MinDistanceの方が採用される
+        /// </summary>
+        public float MinDistance
         {
             set; get;
         }
@@ -288,8 +297,10 @@ namespace MagnetSpace
                 return Vector3.zero;
             }
 
-            var scalarDistance = distance.magnitude;
-            return -MagnetManager.Instance.Coulomb * GetCharge() * other.GetCharge() * distance / (scalarDistance * scalarDistance * scalarDistance);
+            var magnitude = distance.magnitude;
+            var normalizedDistance = distance / magnitude;
+            var scalarDistance = Mathf.Max(magnitude, MagnetManager.Instance.MinDistance);
+            return -MagnetManager.Instance.Coulomb * GetCharge() * other.GetCharge() / (scalarDistance * scalarDistance) * normalizedDistance;
         }
         public void AddForce(Vector3 force)
         {

@@ -21,12 +21,15 @@
 	クーロンの法則が適用される磁性ブロックのマンハッタン距離の最大値。
 	計算量の増大を防ぐために設定。
 	この値より遠い距離にあるブロック同士の磁力は、計算されない。
+	また、距離の最小値を設定することで暴発を防ぐ。
 	F = 0 if MaxDistance < r
 	
 	We set Maximum Manhattan distance between two magnetic blocks that follows coulomb's law,
 	since we want to avoid the increase of complexity.
 	Magnetic forces between blocks farther apart than this value will not be calculated.
+	And we Minimum Euclid distance to prevent accidental strange physical behaviour.
 	F = 0 if MaxDistance < r
 	-->
 	<MaxDistance>30</MaxDistance>
+	<MinDistance>0.1</MinDistance>
 </Config>
