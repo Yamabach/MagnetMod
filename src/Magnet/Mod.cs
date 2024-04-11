@@ -27,15 +27,16 @@ namespace MagnetSpace
 
             // インスタンスの初期化
             m_magnetManager = SingleInstance<MagnetManager>.Instance;
-            UnityEngine.Object.DontDestroyOnLoad(m_magnetManager);
+            //UnityEngine.Object.DontDestroyOnLoad(m_magnetManager);
             var config = XMLDeserializer.Deserialize("config.xml");
             m_magnetManager.Coulomb = config.CoulombConstant;
             m_magnetManager.MaxDistance = config.MaxDistance;
             m_magnetManager.MinDistance = config.MinDistance;
             m_magnetManager.transform.parent = m_mod.transform;
             m_skinLoader = SingleInstance<SkinLoader>.Instance;
-            UnityEngine.Object.DontDestroyOnLoad(m_skinLoader);
+            //UnityEngine.Object.DontDestroyOnLoad(m_skinLoader);
             m_skinLoader.transform.parent = m_mod.transform;
+            UnityEngine.Object.DontDestroyOnLoad(m_mod);
 
             // pole typeの初期化
             PoleType = new List<string>
@@ -124,13 +125,18 @@ namespace MagnetSpace
         public void FixedUpdate()
         {
             // Simulate FixedUpdate Host
-            if (!StatMaster.isHosting)
+            if (StatMaster.isMP && !StatMaster.isHosting)
             {
                 //Mod.Warning("FixedUpdate was skipped!");
                 return;
             }
-            if (Monopoles is null || Monopoles.Count == 0) { return; }
+            if (Monopoles == null)
+            {
+                //Mod.Warning("monopoles are null");
+                return;
+            }
 
+            //Mod.Log($"monopoles count = {Monopoles.Count}");
             // それぞれのブロックに力をかける
             for (int i=0; i<Monopoles.Count; i++)
             {
@@ -669,6 +675,10 @@ namespace MagnetSpace
                 m_vis = GetVisualController();
             }
             SetSkin();
+        }
+        public override void OnSimulateStop()
+        {
+            MagnetManager.Instance.Remove(this);
         }
         /// <summary>
         /// MagnetManagerから自身を破棄する
