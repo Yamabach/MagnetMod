@@ -9,7 +9,7 @@
 	<Name>Magnet</Name>
 	<Author>Yamabach</Author> <!-- FIX: Insert your name here. -->
 	<!-- Major.Minor.Build -->
-	<Version>1.0.0</Version>
+	<Version>1.1.0</Version>
 	
 	<Description>
 Add an original magnetic system and magnetic blocks specified by custom module.
@@ -39,7 +39,7 @@ Add an original magnetic system and magnetic blocks specified by custom module.
 		 Important: You cannot upload mods to Steam or WeGame while Debug is turned on.
 		 
 		 Note: This value is independent of the Debug values for specific Blocks and Entities.-->
-	<Debug>false</Debug>
+	<Debug>true</Debug>
 	
 	<!-- Whether the mod can be used in MP or only in SP.
 		 SP-only mods are easier to write but obviously more limited in their uses.
@@ -88,6 +88,7 @@ Add an original magnetic system and magnetic blocks specified by custom module.
 		<!-- <Block path="TestMagnet.xml" /> -->
 		<Block path="NaturalMagnet.xml" /> <!-- 10 -->
 		<Block path="Electromagnet.xml" /> <!-- 20 -->
+		<Block path="Gaussmeter.xml" />    <!-- 30 -->
 	</Blocks>
 	
 	<!-- Any entities (level objects) your mod adds to the game.

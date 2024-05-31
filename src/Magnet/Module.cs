@@ -71,4 +71,67 @@ namespace MagnetSpace.Module
         #endregion
         #endregion
     }
+    [XmlRoot("GaussmeterModule")]
+    [Reloadable]
+    public class GaussmeterModule : BlockModule
+    {
+        /// <summary>
+        /// �ɂ̈ʒu position of pole
+        /// </summary>
+        [XmlElement("PoleTransform")]
+        [Reloadable]
+        public TransformValues PoleTransform;
+
+        #region visual property
+        [XmlElement("MeshOff")]
+        [Reloadable]
+        public MeshReference MeshOff;
+        [XmlElement("TextureOff")]
+        [Reloadable]
+        public ResourceReference TextureOff;
+        [XmlElement("MeshNorth")]
+        [Reloadable]
+        public MeshReference MeshNorth;
+        [XmlElement("TextureNorth")]
+        [Reloadable]
+        public ResourceReference TextureNorth;
+        [XmlElement("MeshSouth")]
+        [Reloadable]
+        public MeshReference MeshSouth;
+        [XmlElement("TextureSouth")]
+        [Reloadable]
+        public ResourceReference TextureSouth;
+        #endregion
+
+        #region mappers
+        [XmlElement("Threshold")]
+        [Reloadable]
+        public MSliderReference Threshold;
+        #endregion
+
+        [XmlElement("KeyActivate")]
+        [Reloadable]
+        [CanBeEmpty]
+        [DefaultValue(null)]
+        public MKeyReference KeyActivate;
+        [XmlElement("ToggleActivateByKey")]
+        [Reloadable]
+        [CanBeEmpty]
+        [DefaultValue(null)]
+        public MToggleReference ToggleActivateByKey;
+        /*
+        #region emulation
+        [XmlElement("EmulateNorth")]
+        [Reloadable]
+        [CanBeEmpty]
+        [DefaultValue(null)]
+        public MKeyReference EmulateNorth;
+        [XmlElement("EmulateSouth")]
+        [Reloadable]
+        [CanBeEmpty]
+        [DefaultValue(null)]
+        public MKeyReference EmulateSouth;
+        #endregion
+        */
+    }
 }
