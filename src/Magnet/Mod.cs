@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using InternalModding.Mods;
 using MagnetSpace.Module;
 using Modding;
 using Modding.Modules;
@@ -31,8 +30,10 @@ namespace MagnetSpace
             m_magnetManager.MaxDistance = config.MaxDistance;
             m_magnetManager.MinDistance = config.MinDistance;
             m_magnetManager.transform.parent = m_mod.transform;
+
             m_skinLoader = SingleInstance<SkinLoader>.Instance;
             m_skinLoader.transform.parent = m_mod.transform;
+            m_skinLoader.InitializeMessages();
             UnityEngine.Object.DontDestroyOnLoad(m_mod);
 
             // pole typeの初期化
@@ -169,37 +170,39 @@ namespace MagnetSpace
     /// <summary>
     /// Block module behaviour for magnet module.
     /// </summary>
-    public class Magnet : BlockModuleBehaviour<MagnetModule>, IMonopole
+    public class Magnet : BlockModuleBehaviour<MagnetModule>, IMonopole, ISkinVariable
     {
+        public int OwnerId => StatMaster.isMP ? Machine.InternalObject.PlayerID : 0;
         public string BlockName => transform.name.Replace("(Clone)", "");
+        public string IdenticalName => $"{OwnerId.ToString()}-{BlockBehaviour.identifier.ToString()}";
         #region magnetic function
         /// <summary>
         /// 極の位置
         /// </summary>
-        protected Transform m_pole;
+        private Transform m_pole;
         /// <summary>
         /// 磁気量の倍率
         /// </summary>
-        protected MSlider m_sliderChargeGain;
+        private MSlider m_sliderChargeGain;
         /// <summary>
         /// N極を有効化するキー（電磁石）
         /// </summary>
-        protected MKey m_keyMagnetizeNorth;
+        private MKey m_keyMagnetizeNorth;
         /// <summary>
         /// S極を有効化するキー（電磁石）
         /// </summary>
-        protected MKey m_keyMagnetizeSouth;
+        private MKey m_keyMagnetizeSouth;
         /// <summary>
         /// 磁性を選択するメニュー（自然磁石）
         /// </summary>
-        protected MMenu m_menuPoleType;
+        private MMenu m_menuPoleType;
         /// <summary>
         /// m_keyEnergizeを押した場合の挙動
         /// 
         /// trueなら押下時のみ磁化する
         /// falseなら磁化がトグル化する
         /// </summary>
-        protected MToggle m_toggleHoldToMagnetize;
+        private MToggle m_toggleHoldToMagnetize;
         /// <summary>
         /// このブロックが電磁石である
         /// （Module.KeyMagnetizeの有無により判断する）
@@ -230,9 +233,9 @@ namespace MagnetSpace
         private BlockVisualController m_vis;
         private string m_skinName = SkinLoader.Instance.DefaultSkinName;
         private string m_lastSkinName = "";
-        public string PathOff => "off";
-        public string PathNorth => "north";
-        public string PathSouth => "south";
+        private string PathOff => "off";
+        private string PathNorth => "north";
+        private string PathSouth => "south";
         private SkinLoader.SkinDataPack.SkinData m_skinOff;
         private SkinLoader.SkinDataPack.SkinData m_skinNorth;
         private SkinLoader.SkinDataPack.SkinData m_skinSouth;
@@ -246,7 +249,7 @@ namespace MagnetSpace
         /// </summary>
         /// <param name="pole"></param>
         /// <returns></returns>
-        public SkinLoader.MagnetModMesh GetModMesh(PoleType pole)
+        private SkinLoader.MagnetModMesh GetModMesh(PoleType pole)
         {
             switch (pole)
             {
@@ -264,7 +267,7 @@ namespace MagnetSpace
         /// </summary>
         /// <param name="pole"></param>
         /// <returns></returns>
-        public SkinLoader.MagnetModTexture GetModTexture(PoleType pole)
+        private SkinLoader.MagnetModTexture GetModTexture(PoleType pole)
         {
             switch (pole)
             {
@@ -334,8 +337,15 @@ namespace MagnetSpace
             var scalarDistance = Mathf.Max(magnitude, MagnetManager.Instance.MinDistance);
             return (1e3f / 4f * Mathf.PI) * GetCharge() / (scalarDistance * scalarDistance) * normalizedDistance;
         }
+        public void SetSkinVariation(int poleType)
+        {
+            if (StatMaster.isHosting) { return; }
+
+            m_poleType = (PoleType)poleType;
+        }
         #endregion
-        public BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
+
+        private BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
         /// <summary>
         /// スキンを変更する
         /// 
@@ -343,10 +353,10 @@ namespace MagnetSpace
         /// - スキンを変更した時
         /// - PoleTypeを変更した時
         /// </summary>
-        public void SetSkin()
+        private void UpdateSkin()
         {
             m_skinName = OptionsMaster.skinsEnabled ? m_vis.selectedSkin.pack.name : SkinLoader.Instance.DefaultSkinName;
-            var poleType = GetPoleType();
+            var poleType = m_poleType; //GetPoleType();
 
             // スキンが変更された場合またはスキンをロードしている最中の場合
             // m_skinOff m_skinNorth m_skinSouthを取得する
@@ -360,6 +370,9 @@ namespace MagnetSpace
                 m_isLoadingSouthSkin = true;
                 m_hasChangedMesh = false;
                 m_hasChangedTexture = false;
+
+                Mod.Log($"{poleType}");
+                SkinLoader.Instance.SendMessagePoleType(IdenticalName, (int)m_poleType);
 
                 #region m_skinOff m_skinNorth m_skinSouthを取得する
                 var modSkinsOff = SkinLoader.Instance.modSkinsOff;
@@ -541,7 +554,7 @@ namespace MagnetSpace
                 }
             }
         }
-        public ValueHandler OnMenuValueChanged;
+        private ValueHandler OnMenuValueChanged;
 
         #region event
         public override void SafeAwake()
@@ -598,19 +611,16 @@ namespace MagnetSpace
 
             #region スキン初期化
             m_vis = GetVisualController();
+            if (IsSimulating)
+            {
+                SkinLoader.Instance.AddSkinVariable(IdenticalName, this);
+            }
             #endregion
         }
         /// <summary>
         /// 見た目を更新する（ビルド中）
         /// </summary>
-        public override void BuildingFixedUpdate()
-        {
-            if (!m_vis)
-            {
-                m_vis = GetVisualController();
-            }
-            SetSkin();
-        }
+        public override void BuildingFixedUpdate() => UpdateSkin();
         /// <summary>
         /// MagnetManagerに自身を登録する
         /// </summary>
@@ -621,7 +631,7 @@ namespace MagnetSpace
         /// <summary>
         /// キー操作を受け付ける
         /// </summary>
-        public override void SimulateUpdateAlways()
+        public override void SimulateUpdateHost()
         {
             // 電磁石でないなら何もしない
             if (!IsElectromagnet)
@@ -679,25 +689,11 @@ namespace MagnetSpace
         /// <summary>
         /// 見た目を更新する（シミュ中/ホスト）
         /// </summary>
-        public override void SimulateFixedUpdateHost()
-        {
-            if (!m_vis)
-            {
-                m_vis = GetVisualController();
-            }
-            SetSkin();
-        }
+        public override void SimulateFixedUpdateHost() => UpdateSkin();
         /// <summary>
-        /// 見た目を更新する（ビルド中/クライアント）
+        /// 見た目を更新する（シミュ中/クライアント）
         /// </summary>
-        public override void SimulateFixedUpdateClient()
-        {
-            if (!m_vis)
-            {
-                m_vis = GetVisualController();
-            }
-            SetSkin();
-        }
+        public override void SimulateUpdateClient() => UpdateSkin();
         public override void OnSimulateStop()
         {
             MagnetManager.Instance.Remove(this);
@@ -708,59 +704,73 @@ namespace MagnetSpace
         public void OnDestroy()
         {
             MagnetManager.Instance.Remove(this);
+            if (IsSimulating)
+            {
+                SkinLoader.Instance.RemoveSkinVariable(IdenticalName);
+            }
         }
-
         #endregion
     }
-    public class Gaussmeter : BlockModuleBehaviour<GaussmeterModule>, IGaussmeter
+    public class Gaussmeter : BlockModuleBehaviour<GaussmeterModule>, IGaussmeter, ISkinVariable
     {
+        public int OwnerId => StatMaster.isMP ? Machine.InternalObject.PlayerID : 0;
         public string BlockName => transform.name.Replace("(Clone)", "");
+        public string IdenticalName => $"{OwnerId.ToString()}-{BlockBehaviour.identifier.ToString()}";
         public override bool EmulatesAnyKeys => true;
         /// <summary>
         /// 極の位置
         /// </summary>
         private Transform m_pole;
+        private MKey m_keyActivate;
         /// <summary>
         /// 計測を始めるためのキー
         /// </summary>
-        protected MKey[] m_keysActivate;
+        private MKey[] m_keysActivate;
         /// <summary>
         /// キーで計測を行う？
         /// </summary>
-        protected MToggle m_toggleActivateByKey;
+        private MToggle m_toggleActivateByKey;
         /// <summary>
         /// 磁束密度の閾値
         /// </summary>
-        protected MSlider m_sliderThreshold;
+        private MSlider m_sliderThreshold;
         /// <summary>
         /// N極側のエミュレーション
         /// </summary>
-        protected MKey m_emulationNorth;
+        private MKey m_emulationNorth;
         /// <summary>
         /// S極側のエミュレーション
         /// </summary>
-        protected MKey m_emulationSouth;
+        private MKey m_emulationSouth;
         /// <summary>
         /// 現在の磁性
         /// </summary>
         private PoleType m_poleType = PoleType.None;
-        private PoleType m_lastPoleType = PoleType.None;
         /// <summary>
         /// 1F前の磁性（スキン用）
         /// </summary>
-        private PoleType m_lastPoleTypeForSkin = PoleType.None;
+        private PoleType m_lastPoleType = PoleType.None;
         /// <summary>
         /// 現在磁束密度を測定している？
         /// </summary>
         private bool m_isProbingByEmulate = false;
 
+        /// <summary>
+        /// 磁束密度
+        /// </summary>
+        private float m_density = 0f;
+        /// <summary>
+        /// 1F前の磁束密度
+        /// </summary>
+        private float m_lastDensity = 0f;
+
         #region skin
         private BlockVisualController m_vis;
         private string m_skinName = SkinLoader.Instance.DefaultSkinName;
         private string m_lastSkinName = "";
-        public string PathOff => "off";
-        public string PathNorth => "north";
-        public string PathSouth => "south";
+        private string PathOff => "off";
+        private string PathNorth => "north";
+        private string PathSouth => "south";
         private SkinLoader.SkinDataPack.SkinData m_skinOff;
         private SkinLoader.SkinDataPack.SkinData m_skinNorth;
         private SkinLoader.SkinDataPack.SkinData m_skinSouth;
@@ -774,7 +784,7 @@ namespace MagnetSpace
         /// </summary>
         /// <param name="pole"></param>
         /// <returns></returns>
-        public SkinLoader.MagnetModMesh GetModMesh(PoleType pole)
+        private SkinLoader.MagnetModMesh GetModMesh(PoleType pole)
         {
             switch (pole)
             {
@@ -792,7 +802,7 @@ namespace MagnetSpace
         /// </summary>
         /// <param name="pole"></param>
         /// <returns></returns>
-        public SkinLoader.MagnetModTexture GetModTexture(PoleType pole)
+        private SkinLoader.MagnetModTexture GetModTexture(PoleType pole)
         {
             switch (pole)
             {
@@ -808,15 +818,51 @@ namespace MagnetSpace
         #endregion
 
         #region interface implementation
-        public PoleType GetPoleType() => m_poleType;
         public Vector3 GetPolePosition() => m_pole.position;
-
         public Vector3 GetPoleDirection() => m_pole.forward;
         public float GetMagneticFluxDensity(IMonopole monopole) 
             => Vector3.Dot(monopole.GetMagneticFluxDensity(GetPolePosition()), GetPoleDirection());
+        private float GetMagneticFluxDensity(params IMonopole[] monopoles)
+        {
+            float density = 0f;
+            foreach (var monopole in monopoles)
+            {
+                density += GetMagneticFluxDensity(monopole);
+            }
+            return density;
+        }
+        private float GetMagneticFluxDensity(List<IMonopole> monopoles) => GetMagneticFluxDensity(monopoles.ToArray());
+        
+        public void SetSkinVariation(int poleType)
+        {
+            if (StatMaster.isHosting) { return; }
+
+            m_poleType = (PoleType)poleType;
+        }
         #endregion
 
-        public BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
+        /// <summary>
+        /// 磁束密度から極の種類を求める
+        /// 磁束密度が小さい→N極
+        /// 磁束密度が大きい→S極
+        /// </summary>
+        /// <param name="density"></param>
+        /// <param name="threshold"></param>
+        /// <returns></returns>
+        private PoleType GetPoleType(float density, float threshold)
+        {
+            var poleType = PoleType.None;
+            if (density < -threshold)
+            {
+                poleType = PoleType.North;
+            }
+            else if (threshold <= density)
+            {
+                poleType = PoleType.South;
+            }
+            return poleType;
+        }
+        private BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
         /// <summary>
         /// スキンを変更する
         /// 
@@ -824,23 +870,25 @@ namespace MagnetSpace
         /// - スキンを変更した時
         /// - PoleTypeを変更した時
         /// </summary>
-        public void SetSkin()
+        private void UpdateSkin()
         {
             m_skinName = OptionsMaster.skinsEnabled ? m_vis.selectedSkin.pack.name : SkinLoader.Instance.DefaultSkinName;
-            var poleType = GetPoleType();
+            var poleType = m_poleType;
 
             // スキンが変更された場合またはスキンをロードしている最中の場合
             // m_skinOff m_skinNorth m_skinSouthを取得する
-            if (m_skinName != m_lastSkinName || poleType != m_lastPoleTypeForSkin ||
+            if (m_skinName != m_lastSkinName || poleType != m_lastPoleType ||
                 m_isLoadingNorthSkin || m_isLoadingSouthSkin || m_isLoadingOffSkin)
             {
                 m_lastSkinName = m_skinName;
-                m_lastPoleTypeForSkin = poleType;
+                m_lastPoleType = poleType;
                 m_isLoadingOffSkin = true;
                 m_isLoadingNorthSkin = true;
                 m_isLoadingSouthSkin = true;
                 m_hasChangedMesh = false;
                 m_hasChangedTexture = false;
+
+                Mod.Log($"{poleType}");
 
                 #region m_skinOff m_skinNorth m_skinSouthを取得する
                 var modSkinsOff = SkinLoader.Instance.modSkinsOff;
@@ -1022,7 +1070,6 @@ namespace MagnetSpace
                 }
             }
         }
-        public ValueHandler OnMenuValueChanged;
 
         #region event
         public override void SafeAwake()
@@ -1038,18 +1085,15 @@ namespace MagnetSpace
                 }
                 if (Module.KeyActivate != null)
                 {
-                    m_keysActivate = new MKey[]
-                        {
-                            GetKey(Module.KeyActivate)
-                        };
+                    m_keyActivate = GetKey(Module.KeyActivate);
+                    m_keysActivate = new MKey[] { m_keyActivate };
                 }
                 if (Module.ToggleActivateByKey != null)
                 {
                     m_toggleActivateByKey = GetToggle(Module.ToggleActivateByKey);
                     m_toggleActivateByKey.Toggled += (isActive) =>
                     {
-                        //Mod.Log($"active? {isActive}");
-                        m_keysActivate[0].DisplayInMapper = isActive;
+                        m_keyActivate.DisplayInMapper = isActive;
                     };
                 }
                 //if (Module.EmulateNorth != null)
@@ -1084,67 +1128,44 @@ namespace MagnetSpace
 
             #region スキン初期化
             m_vis = GetVisualController();
+            if (IsSimulating)
+            {
+                SkinLoader.Instance.AddSkinVariable(IdenticalName, this);
+            }
             #endregion
         }
         /// <summary>
         /// 見た目を更新する（ビルド中）
         /// </summary>
-        public override void BuildingFixedUpdate()
-        {
-            if (!m_vis)
-            {
-                m_vis = GetVisualController();
-            }
-            SetSkin();
-        }
+        public override void BuildingFixedUpdate() => UpdateSkin();
         /// <summary>
         /// キー操作を受け付ける
         /// </summary>
-        public override void SimulateUpdateAlways()
-        {
-            // キー入力で有効化する場合はキー入力している場合のみ受け付ける
-            bool useKey = m_toggleActivateByKey.IsActive;
-            if (useKey && !(m_keysActivate[0].IsHeld || m_isProbingByEmulate))
-            {
-                m_poleType = PoleType.None;
-                return;
-            }
-
-            // 全てのIMonopoleの磁束密度を計算する
-            float density = 0f;
-            foreach (var monopole in MagnetManager.Instance.Monopoles)
-            {
-                density += GetMagneticFluxDensity(monopole);
-            }
-            //Mod.Log($"density : {density}");
-
-            // 閾値によってPoleTypeを更新する
-            if (density < -m_sliderThreshold.Value)
-            {
-                m_poleType = PoleType.South;
-            }
-            else if (m_sliderThreshold.Value <= density)
-            {
-                m_poleType = PoleType.North;
-            }
-            else
-            {
-                m_poleType = PoleType.None;
-            }
-        }
         public override void SendKeyEmulationUpdateHost()
         {
-            if (m_poleType == m_lastPoleType) { return; }
-            m_lastPoleType = m_poleType;
+            // キー入力で有効化する場合はキー入力している場合のみ受け付ける
+            bool isInvalid = m_toggleActivateByKey.IsActive && !(m_keyActivate.IsHeld || m_isProbingByEmulate);
 
-            Mod.Log($"pole type {m_poleType}");
+            // 全てのIMonopoleの磁束密度を計算する
+            m_lastDensity = m_density;
+            m_density = isInvalid ? 0f : GetMagneticFluxDensity(MagnetManager.Instance.Monopoles);
 
-            // TODO
-            // NorthかSouthをエミュレートした後逆をエミュレートできなくなる
-            // なんで？
+            // PoleTypeを更新する
+            m_poleType = GetPoleType(m_density, m_sliderThreshold.Value);
 
-            EmulateKeys(m_keysActivate, m_emulationNorth, m_poleType == PoleType.North);
-            EmulateKeys(m_keysActivate, m_emulationSouth, m_poleType == PoleType.South);
+            // 磁束密度が規定値を前後した時に限り、エミュレーションを変更する
+            // 磁束密度が小さい→North
+            if ((m_sliderThreshold.Value + m_density) * (m_sliderThreshold.Value + m_lastDensity) < 0f)
+            {
+                EmulateKeys(m_keysActivate, m_emulationSouth, m_density < -m_sliderThreshold.Value);
+                SkinLoader.Instance.SendMessagePoleType(IdenticalName, (int)m_poleType);
+            }
+            // 磁束密度が大きい→South
+            if ((m_density - m_sliderThreshold.Value) * (m_lastDensity - m_sliderThreshold.Value) < 0f)
+            {
+                EmulateKeys(m_keysActivate, m_emulationNorth, m_sliderThreshold.Value <= m_density);
+                SkinLoader.Instance.SendMessagePoleType(IdenticalName, (int)m_poleType);
+            }
         }
         /// <summary>
         /// エミュレーションを受け付ける
@@ -1152,29 +1173,22 @@ namespace MagnetSpace
         public override void KeyEmulationUpdate()
         {
             // キー入力で有効化する場合のみ受け付ける
-            m_isProbingByEmulate = m_keysActivate[0].EmulationHeld();
+            m_isProbingByEmulate = m_keyActivate.EmulationHeld();
         }
         /// <summary>
         /// 見た目を更新する（シミュ中/ホスト）
         /// </summary>
-        public override void SimulateFixedUpdateHost()
-        {
-            if (!m_vis)
-            {
-                m_vis = GetVisualController();
-            }
-            SetSkin();
-        }
+        public override void SimulateFixedUpdateHost() => UpdateSkin();
         /// <summary>
-        /// 見た目を更新する（ビルド中/クライアント）
+        /// 見た目を更新する（シミュ中/クライアント）
         /// </summary>
-        public override void SimulateFixedUpdateClient()
+        public override void SimulateUpdateClient() => UpdateSkin();
+        public void OnDestroy()
         {
-            if (!m_vis)
+            if (IsSimulating)
             {
-                m_vis = GetVisualController();
+                SkinLoader.Instance.RemoveSkinVariable(IdenticalName);
             }
-            SetSkin();
         }
         #endregion
     }

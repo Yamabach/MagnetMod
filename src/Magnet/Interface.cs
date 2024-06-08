@@ -1,4 +1,3 @@
-using Modding;
 using UnityEngine;
 
 namespace MagnetSpace
@@ -55,7 +54,6 @@ namespace MagnetSpace
     }
     public interface IGaussmeter
     {
-        PoleType GetPoleType();
         /// <summary>
         /// 極の位置を取得する
         /// </summary>
@@ -72,5 +70,12 @@ namespace MagnetSpace
         /// <param name="monopole"></param>
         /// <returns>Gauss, equal to 1000T</returns>
         float GetMagneticFluxDensity(IMonopole monopole);
+    }
+    /// <summary>
+    /// シミュ中にスキンが変化するブロック
+    /// </summary>
+    public interface ISkinVariable
+    {
+        void SetSkinVariation(int variation);
     }
 }
