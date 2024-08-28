@@ -141,6 +141,14 @@ Add an original magnetic system and magnetic blocks specified by custom module.
 		<Texture name="electromagnet-off" path="electromagnet_off.png"/>
 		<Texture name="electromagnet-n" path="electromagnet_n.png"/>
 		<Texture name="electromagnet-s" path="electromagnet_s.png"/>
+		
+		<!-- gaussmeter -->
+		<Mesh name="gaussmeter" path="gaussmeter.obj" />
+		<Mesh name="gaussmeter-cover" path="gaussmeter_move.obj" />
+		<Texture name="gaussmeter-off" path="electromagnet_off.png" />
+		<Texture name="gaussmeter-n" path="electromagnet_n.png" />
+		<Texture name="gaussmeter-s" path="electromagnet_s.png" />
+		<Texture name="gaussmeter-cover-tex" path="naturalmagnet_n.png" />
 	</Resources>
 
 

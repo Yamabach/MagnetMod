@@ -363,7 +363,7 @@ namespace MagnetSpace
                 return Localisation.LocalisationManager.Instance.GetTranslationById(781);
             }
         }
-        public Dictionary<string, SkinDataPack> modSkinsOff = new Dictionary<string, SkinDataPack>();
+        public Dictionary<string, SkinDataPack> ModSkinsOff = new Dictionary<string, SkinDataPack>();
         /// <summary>
         /// N極のスキン
         /// </summary>
@@ -372,5 +372,9 @@ namespace MagnetSpace
         /// S極のスキン
         /// </summary>
         public Dictionary<string, SkinDataPack> ModSkinsSouth = new Dictionary<string, SkinDataPack>();
+        /// <summary>
+        /// カバーのスキン
+        /// </summary>
+        public Dictionary<string, SkinDataPack> ModSkinsCover = new Dictionary<string, SkinDataPack>();
     }
 }
