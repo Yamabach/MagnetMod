@@ -54,7 +54,7 @@
               "RelativeDocumentMoniker": "Magnet\\Mod.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Mod.cs",
               "RelativeToolTip": "Magnet\\Mod.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAALsEAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAKAEAAAAAAAAAAAywLsEAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-17T06:14:46.896Z",
               "EditorCaption": ""
@@ -87,8 +87,16 @@
         },
         {
           "DockedWidth": 263,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 4,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{75504045-d02f-44e5-bf60-5f60df380e8b}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 4,
@@ -109,9 +117,10 @@
               "RelativeDocumentMoniker": "..\\Magnet\\Mod.xml",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Mod.xml",
               "RelativeToolTip": "..\\Magnet\\Mod.xml",
-              "ViewState": "AgIAAHsAAAAAAAAAAAAAAIYAAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAAAJIAAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2024-03-17T07:31:25.578Z"
+              "WhenOpened": "2024-03-17T07:31:25.578Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -121,7 +130,7 @@
               "RelativeDocumentMoniker": "..\\Magnet\\Gaussmeter.xml",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Gaussmeter.xml",
               "RelativeToolTip": "..\\Magnet\\Gaussmeter.xml",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAAAK8AAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAKIAAAAAAAAAAAAAAMEAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
               "WhenOpened": "2024-05-31T16:32:16.291Z",
               "EditorCaption": ""

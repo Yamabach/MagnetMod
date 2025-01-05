@@ -139,7 +139,7 @@
 	<!-- <DamageType>Blunt</DamageType> -->
 	
 	<Mesh name="gaussmeter">
-		<Position x="0.0" y="0.0" z="1.0" />
+		<Position x="0.0" y="0.0" z="0.8" />
 		<Rotation x="0.0" y="0.0" z="0.0" />
 		<Scale x="1" y="1" z="1" />
 	</Mesh>
@@ -183,10 +183,17 @@
 	</Ghost> -->
 	
 	<Colliders>
+		<!-- main -->
 		<BoxCollider>
-			<Position x="0.0" y="0.0" z="0.85" />
+			<Position x="0.0" y="0.0" z="1.0" />
 			<Rotation x="0.0" y="0.0" z="0.0" />
-			<Scale x="0.4" y="0.4" z="1.4" />
+			<Scale x="0.6" y="0.6" z="1.6" />
+		</BoxCollider>
+		<!-- pole -->
+		<BoxCollider>
+			<Position x="0.0" y="0.0" z="1.8" />
+			<Rotation x="0.0" y="0.0" z="0.0" />
+			<Scale x="0.1" y="0.1" z="2.0" />
 		</BoxCollider>
 	</Colliders>
 	

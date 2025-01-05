@@ -5,6 +5,7 @@ using MagnetSpace.Module;
 using Modding;
 using Modding.Modules;
 using UnityEngine;
+using static TutorialStepPrerequisite;
 
 namespace MagnetSpace
 {
@@ -1046,6 +1047,7 @@ namespace MagnetSpace
                     {
                         GetModMesh(poleType).ApplyToObject(m_vis.MeshFilter);
                         m_hasChangedMesh = true;
+                        Mod.Log($"apply skin to {poleType}");
                     }
                     if (!m_hasChangedTexture)
                     {
@@ -1107,18 +1109,8 @@ namespace MagnetSpace
                         m_keyActivate.DisplayInMapper = isActive;
                     };
                 }
-                //if (Module.EmulateNorth != null)
-                //{
-                    //m_emulationNorth = GetKey(Module.EmulateNorth);
-                    //m_emulationNorth = AddEmulatorKey(m_emulationNorth.DisplayName, m_emulationNorth.Key, m_emulationNorth.GetKey(0));
                 m_emulationNorth = AddEmulatorKey("Emulate N", "gaussmeter-north", KeyCode.C);
-                //}
-                //if (Module.EmulateSouth != null)
-                //{
-                    //m_emulationSouth = GetKey(Module.EmulateSouth);
-                    //m_emulationSouth = AddEmulatorKey(m_emulationSouth.DisplayName, m_emulationSouth.Key, m_emulationSouth.GetKey(0));
                 m_emulationSouth = AddEmulatorKey("Emulate S", "gaussmeter-south", KeyCode.V);
-                //}
             }
             catch (Exception e)
             {
@@ -1217,7 +1209,7 @@ namespace MagnetSpace
         /// <summary>
         /// 無効時のカバーオブジェクトの位置
         /// </summary>
-        public Vector3 PositionInvalid = new Vector3(0f, 0f, 1f);
+        public Vector3 PositionInvalid = new Vector3(0f, 0f, 0.8f);
         /// <summary>
         /// 有効時のカバーオブジェクトの位置
         /// </summary>
@@ -1272,7 +1264,6 @@ namespace MagnetSpace
         private bool m_isLoadingSkin = false;
         private bool m_hasChangedMesh = false;
         private bool m_hasChangedTexture = false;
-        private BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
         /// <summary>
         /// スキンを変更する
         /// 
@@ -1353,6 +1344,7 @@ namespace MagnetSpace
                     {
                         m_skin.Mesh.ApplyToObject(m_filter);
                         m_hasChangedMesh = true;
+                        Mod.Log($"apply skin to {m_skin.Path}");
                     }
                     if (!m_hasChangedTexture)
                     {
@@ -1413,7 +1405,9 @@ namespace MagnetSpace
 
             // メッシュとテクスチャの読み込みと割り当て
             m_vis = GetComponent<BlockVisualController>();
-            UpdateSkin();
+
+            // マテリアルのシェーダをブロックからコピーする
+            m_renderer.material = m_vis.renderers[0].material;
 
             // 計算用の関数の設定
             m_parameterFunc = ParameterSin;
