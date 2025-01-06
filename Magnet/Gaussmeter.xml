@@ -68,7 +68,7 @@
 	<ModuleMapperTypes>
 		<Key    displayName="Activate"  key="gaussmeter-activate" default="B"/>
 		<Toggle displayName="Activate by Key" key="gaussmeter-activate-by-key" default="false"/>
-		<Slider displayName="Threshold" key="gaussmeter-threshold" min="1" max="100.0" default="10" unclampled="true"/>
+		<Slider displayName="Threshold" key="gaussmeter-threshold" min="1.0" max="100.0" default="3.0" unclampled="true"/>
 		<!--<Key    displayName="Emulate N" key="gaussmeter-north" default="C"/>-->
 		<!--<Key    displayName="Emulate S" key="gaussmeter-south" default="V"/>-->
 	</ModuleMapperTypes>
