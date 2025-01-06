@@ -75,7 +75,7 @@
 	<Modules>
 		<GaussmeterModule modid="ac980b9d-19dd-4de6-aca5-97219154ce48">
 			<PoleTransform>
-				<Position x="0.0" y="0.0" z="2.0" />
+				<Position x="0.0" y="0.0" z="2.8" />
 				<Rotation x="0.0" y="0.0" z="0.0" />
 				<Scale x="1.0" y="1.0" z="1.0" />
 			</PoleTransform>
