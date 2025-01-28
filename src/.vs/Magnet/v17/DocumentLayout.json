@@ -54,7 +54,7 @@
               "RelativeDocumentMoniker": "Magnet\\Mod.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Mod.cs",
               "RelativeToolTip": "Magnet\\Mod.cs",
-              "ViewState": "AgIAAKAEAAAAAAAAAAAywLsEAABDAAAAAAAAAA==",
+              "ViewState": "AgIAAFMEAAAAAAAAAAAAwLsEAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-17T06:14:46.896Z",
               "EditorCaption": ""
@@ -119,8 +119,7 @@
               "RelativeToolTip": "..\\Magnet\\Mod.xml",
               "ViewState": "AgIAAHsAAAAAAAAAAAAAAJIAAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2024-03-17T07:31:25.578Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-17T07:31:25.578Z"
             },
             {
               "$type": "Document",
@@ -130,7 +129,7 @@
               "RelativeDocumentMoniker": "..\\Magnet\\Gaussmeter.xml",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\Magnet\\Gaussmeter.xml",
               "RelativeToolTip": "..\\Magnet\\Gaussmeter.xml",
-              "ViewState": "AgIAAKIAAAAAAAAAAAAAAL0AAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAAEYAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
               "WhenOpened": "2024-05-31T16:32:16.291Z",
               "EditorCaption": ""
