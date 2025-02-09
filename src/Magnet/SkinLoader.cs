@@ -376,5 +376,7 @@ namespace MagnetSpace
         /// カバーのスキン
         /// </summary>
         public Dictionary<string, SkinDataPack> ModSkinsCover = new Dictionary<string, SkinDataPack>();
+        public Dictionary<string, SkinDataPack> ModSkinsCoverNorth = new Dictionary<string, SkinDataPack>();
+        public Dictionary<string, SkinDataPack> ModSkinsCoverSouth = new Dictionary<string, SkinDataPack>();
     }
 }

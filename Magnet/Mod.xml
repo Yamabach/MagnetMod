@@ -149,7 +149,9 @@ Add an original magnetic system and magnetic blocks specified by custom module.
 		<Texture name="gaussmeter-s" path="TEX_gaussmeter_blue_2.png" />
 		<!-- gaussmeter cover -->
 		<Mesh name="gaussmeter-cover" path="gaussmeter_move.obj" />
-		<Texture name="gaussmeter-cover-tex" path="TEX_gaussmeter_black_2.png" />
+		<Texture name="gaussmeter-cover-off" path="TEX_gaussmeter_black_2.png" />
+		<Texture name="gaussmeter-cover-n" path="TEX_gaussmeter_red_2.png" />
+		<Texture name="gaussmeter-cover-s" path="TEX_gaussmeter_blue_2.png" />
 	</Resources>
 
 
