@@ -67,7 +67,7 @@
               "RelativeDocumentMoniker": "Magnet\\Mod.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Besiege\\Besiege_Data\\Mods\\Magnet Project\\src\\Magnet\\Mod.cs",
               "RelativeToolTip": "Magnet\\Mod.cs",
-              "ViewState": "AgIAAL8FAAAAAAAAAADgv8cFAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAL8FAAAAAAAAAADgv+EFAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-17T06:14:46.896Z",
               "EditorCaption": ""
@@ -89,8 +89,12 @@
         },
         {
           "DockedWidth": 263,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 5,
