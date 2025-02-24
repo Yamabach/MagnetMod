@@ -1,4 +1,3 @@
-using Modding;
 using UnityEngine;
 
 namespace MagnetSpace
@@ -45,5 +44,38 @@ namespace MagnetSpace
         /// Rigidbodyに対して力を与える
         /// </summary>
         void AddForce(Vector3 force);
+
+        /// <summary>
+        /// 引数の位置に対する磁束密度（単位はガウス）を取得する
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns>Gauss, equal to 1000T</returns>
+        Vector3 GetMagneticFluxDensity(Vector3 position);
+    }
+    public interface IGaussmeter
+    {
+        /// <summary>
+        /// 極の位置を取得する
+        /// </summary>
+        /// <returns></returns>
+        Vector3 GetPolePosition();
+        /// <summary>
+        /// 極の前方の方向を取得する
+        /// </summary>
+        /// <returns></returns>
+        Vector3 GetPoleDirection();
+        /// <summary>
+        /// 引数のIMonopoleの磁束密度（単位はガウス）を取得する
+        /// </summary>
+        /// <param name="monopole"></param>
+        /// <returns>Gauss, equal to 1000T</returns>
+        float GetMagneticFluxDensity(IMonopole monopole);
+    }
+    /// <summary>
+    /// シミュ中にスキンが変化するブロック
+    /// </summary>
+    public interface ISkinVariable
+    {
+        void SetSkinVariation(int variation);
     }
 }

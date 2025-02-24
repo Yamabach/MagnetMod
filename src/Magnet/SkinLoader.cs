@@ -302,6 +302,50 @@ namespace MagnetSpace
         }
         #endregion
 
+        // SkinVariables
+        private Dictionary<string, ISkinVariable> m_skinVariables;
+        private Dictionary<string, ISkinVariable> SkinVariables
+        {
+            get
+            {
+                if (m_skinVariables is null)
+                {
+                    m_skinVariables = new Dictionary<string, ISkinVariable>();
+                }
+                return m_skinVariables;
+            }
+        }
+        public void AddSkinVariable(string name, ISkinVariable skinVariable)
+        {
+            if (SkinVariables.ContainsKey(name)) { return; }
+            SkinVariables.Add(name, skinVariable);
+        }
+        public void RemoveSkinVariable(string name)
+        {
+            if (!SkinVariables.ContainsKey (name)) { return; }
+            SkinVariables.Remove(name);
+        }
+
+        // message
+        public MessageType MessagePoleType;
+        public void InitializeMessages()
+        {
+            MessagePoleType = ModNetworking.CreateMessageType(DataType.String, DataType.Integer);
+            ModNetworking.Callbacks[MessagePoleType] += new Action<Message>((msg) =>
+            {
+                //Mod.Log($"{(string)msg.GetData(0)} {(int)msg.GetData(1)}"); // 受け取れてる
+                if (SkinVariables.TryGetValue((string)msg.GetData(0), out var sv))
+                {
+                    sv.SetSkinVariation((int)msg.GetData(1));
+                }
+            });
+        }
+        public void SendMessagePoleType(string name, int poleType)
+        {
+            if (StatMaster.isClient) { return; }
+            ModNetworking.SendToAll(MessagePoleType.CreateMessage(name, poleType));
+        }
+
 
         public override string Name => "MagnetSkinLoader";
         /// <summary>
@@ -319,7 +363,7 @@ namespace MagnetSpace
                 return Localisation.LocalisationManager.Instance.GetTranslationById(781);
             }
         }
-        public Dictionary<string, SkinDataPack> modSkinsOff = new Dictionary<string, SkinDataPack>();
+        public Dictionary<string, SkinDataPack> ModSkinsOff = new Dictionary<string, SkinDataPack>();
         /// <summary>
         /// N極のスキン
         /// </summary>
@@ -328,5 +372,11 @@ namespace MagnetSpace
         /// S極のスキン
         /// </summary>
         public Dictionary<string, SkinDataPack> ModSkinsSouth = new Dictionary<string, SkinDataPack>();
+        /// <summary>
+        /// カバーのスキン
+        /// </summary>
+        public Dictionary<string, SkinDataPack> ModSkinsCover = new Dictionary<string, SkinDataPack>();
+        public Dictionary<string, SkinDataPack> ModSkinsCoverNorth = new Dictionary<string, SkinDataPack>();
+        public Dictionary<string, SkinDataPack> ModSkinsCoverSouth = new Dictionary<string, SkinDataPack>();
     }
 }

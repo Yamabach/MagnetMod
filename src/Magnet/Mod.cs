@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MagnetSpace.Module;
 using Modding;
 using Modding.Modules;
 using UnityEngine;
+using static TutorialStepPrerequisite;
 
 namespace MagnetSpace
 {
@@ -17,8 +19,6 @@ namespace MagnetSpace
         private MagnetManager m_magnetManager;
         private SkinLoader m_skinLoader;
         #endregion
-        #region message
-        #endregion
         public static List<string> PoleType;
 
         public override void OnLoad()
@@ -27,15 +27,15 @@ namespace MagnetSpace
 
             // インスタンスの初期化
             m_magnetManager = SingleInstance<MagnetManager>.Instance;
-            //UnityEngine.Object.DontDestroyOnLoad(m_magnetManager);
             var config = XMLDeserializer.Deserialize("config.xml");
             m_magnetManager.Coulomb = config.CoulombConstant;
             m_magnetManager.MaxDistance = config.MaxDistance;
             m_magnetManager.MinDistance = config.MinDistance;
             m_magnetManager.transform.parent = m_mod.transform;
+
             m_skinLoader = SingleInstance<SkinLoader>.Instance;
-            //UnityEngine.Object.DontDestroyOnLoad(m_skinLoader);
             m_skinLoader.transform.parent = m_mod.transform;
+            m_skinLoader.InitializeMessages();
             UnityEngine.Object.DontDestroyOnLoad(m_mod);
 
             // pole typeの初期化
@@ -47,6 +47,7 @@ namespace MagnetSpace
 
             // モジュールの登録
             CustomModules.AddBlockModule<MagnetModule, Magnet>("MagnetModule", true);
+            CustomModules.AddBlockModule<GaussmeterModule, Gaussmeter>("GaussmeterModule", true);
 
 			Log("Load");
 		}
@@ -63,7 +64,18 @@ namespace MagnetSpace
         /// <summary>
         /// シーン上に存在するシミュレーション中のIMonopole
         /// </summary>
-        public List<IMonopole> Monopoles;
+        private List<IMonopole> m_monopoles;
+        public List<IMonopole> Monopoles
+        {
+            get
+            {
+                if (m_monopoles is null)
+                {
+                    m_monopoles = new List<IMonopole>();
+                }
+                return m_monopoles;
+            }
+        }
         /// <summary>
         /// クーロン定数
         /// 
@@ -96,13 +108,13 @@ namespace MagnetSpace
         /// <param name="m"></param>
         public void Add(IMonopole m)
         {
-            if (Monopoles is null)
+            if (m_monopoles is null)
             {
-                Monopoles = new List<IMonopole>();
+                m_monopoles = new List<IMonopole>();
             }
-            if (!Monopoles.Contains(m))
+            if (!m_monopoles.Contains(m))
             {
-                Monopoles.Add(m);
+                m_monopoles.Add(m);
             }
         }
         /// <summary>
@@ -112,13 +124,13 @@ namespace MagnetSpace
         /// <param name="m"></param>
         public void Remove(IMonopole m)
         {
-            if (Monopoles is null)
+            if (m_monopoles is null)
             {
-                Monopoles = new List<IMonopole>();
+                m_monopoles = new List<IMonopole>();
             }
-            if (Monopoles.Contains(m))
+            if (m_monopoles.Contains(m))
             {
-                Monopoles.Remove(m);
+                m_monopoles.Remove(m);
             }
         }
 
@@ -127,27 +139,24 @@ namespace MagnetSpace
             // Simulate FixedUpdate Host
             if (StatMaster.isMP && !StatMaster.isHosting)
             {
-                //Mod.Warning("FixedUpdate was skipped!");
                 return;
             }
-            if (Monopoles == null)
+            if (m_monopoles == null)
             {
-                //Mod.Warning("monopoles are null");
                 return;
             }
 
-            //Mod.Log($"monopoles count = {Monopoles.Count}");
             // それぞれのブロックに力をかける
-            for (int i=0; i<Monopoles.Count; i++)
+            for (int i=0; i<m_monopoles.Count; i++)
             {
-                var m_i = Monopoles[i];
+                var m_i = m_monopoles[i];
                 if (!m_i.IsMagnetized())
                 {
                     continue;
                 }
-                for (int j=i+1; j<Monopoles.Count; j++)
+                for (int j=i+1; j<m_monopoles.Count; j++)
                 {
-                    var m_j = Monopoles[j];
+                    var m_j = m_monopoles[j];
                     if (!m_j.IsMagnetized())
                     {
                         continue;
@@ -163,37 +172,39 @@ namespace MagnetSpace
     /// <summary>
     /// Block module behaviour for magnet module.
     /// </summary>
-    public class Magnet : BlockModuleBehaviour<MagnetModule>, IMonopole
+    public class Magnet : BlockModuleBehaviour<MagnetModule>, IMonopole, ISkinVariable
     {
+        public int OwnerId => StatMaster.isMP ? Machine.InternalObject.PlayerID : 0;
         public string BlockName => transform.name.Replace("(Clone)", "");
+        public string IdenticalName => $"{OwnerId.ToString()}-{BlockBehaviour.identifier.ToString()}";
         #region magnetic function
         /// <summary>
         /// 極の位置
         /// </summary>
-        protected Transform m_pole;
+        private Transform m_pole;
         /// <summary>
         /// 磁気量の倍率
         /// </summary>
-        protected MSlider m_sliderChargeGain;
+        private MSlider m_sliderChargeGain;
         /// <summary>
         /// N極を有効化するキー（電磁石）
         /// </summary>
-        protected MKey m_keyMagnetizeNorth;
+        private MKey m_keyMagnetizeNorth;
         /// <summary>
         /// S極を有効化するキー（電磁石）
         /// </summary>
-        protected MKey m_keyMagnetizeSouth;
+        private MKey m_keyMagnetizeSouth;
         /// <summary>
         /// 磁性を選択するメニュー（自然磁石）
         /// </summary>
-        protected MMenu m_menuPoleType;
+        private MMenu m_menuPoleType;
         /// <summary>
         /// m_keyEnergizeを押した場合の挙動
         /// 
         /// trueなら押下時のみ磁化する
         /// falseなら磁化がトグル化する
         /// </summary>
-        protected MToggle m_toggleHoldToMagnetize;
+        private MToggle m_toggleHoldToMagnetize;
         /// <summary>
         /// このブロックが電磁石である
         /// （Module.KeyMagnetizeの有無により判断する）
@@ -224,9 +235,9 @@ namespace MagnetSpace
         private BlockVisualController m_vis;
         private string m_skinName = SkinLoader.Instance.DefaultSkinName;
         private string m_lastSkinName = "";
-        public string PathOff => "off";
-        public string PathNorth => "north";
-        public string PathSouth => "south";
+        private string PathOff => "off";
+        private string PathNorth => "north";
+        private string PathSouth => "south";
         private SkinLoader.SkinDataPack.SkinData m_skinOff;
         private SkinLoader.SkinDataPack.SkinData m_skinNorth;
         private SkinLoader.SkinDataPack.SkinData m_skinSouth;
@@ -240,7 +251,7 @@ namespace MagnetSpace
         /// </summary>
         /// <param name="pole"></param>
         /// <returns></returns>
-        public SkinLoader.MagnetModMesh GetModMesh(PoleType pole)
+        private SkinLoader.MagnetModMesh GetModMesh(PoleType pole)
         {
             switch (pole)
             {
@@ -258,7 +269,7 @@ namespace MagnetSpace
         /// </summary>
         /// <param name="pole"></param>
         /// <returns></returns>
-        public SkinLoader.MagnetModTexture GetModTexture(PoleType pole)
+        private SkinLoader.MagnetModTexture GetModTexture(PoleType pole)
         {
             switch (pole)
             {
@@ -312,8 +323,31 @@ namespace MagnetSpace
         {
             BlockBehaviour.Rigidbody.AddForceAtPosition(force, m_pole.position);
         }
+        public Vector3 GetMagneticFluxDensity(Vector3 position)
+        {
+            var distance = position - GetPolePosition();
+
+            // xyzのいずれかがmax distanceを超える場合は計算しない
+            var maxDistance = MagnetManager.Instance.MaxDistance;
+            if (maxDistance < distance.x || maxDistance < distance.y || maxDistance < distance.z)
+            {
+                return Vector3.zero;
+            }
+
+            var magnitude = distance.magnitude;
+            var normalizedDistance = distance / magnitude;
+            var scalarDistance = Mathf.Max(magnitude, MagnetManager.Instance.MinDistance);
+            return (1e3f / 4f * Mathf.PI) * GetCharge() / (scalarDistance * scalarDistance) * normalizedDistance;
+        }
+        public void SetSkinVariation(int poleType)
+        {
+            if (StatMaster.isHosting) { return; }
+
+            m_poleType = (PoleType)poleType;
+        }
         #endregion
-        public BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
+
+        private BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
         /// <summary>
         /// スキンを変更する
         /// 
@@ -321,10 +355,10 @@ namespace MagnetSpace
         /// - スキンを変更した時
         /// - PoleTypeを変更した時
         /// </summary>
-        public void SetSkin()
+        private void UpdateSkin()
         {
             m_skinName = OptionsMaster.skinsEnabled ? m_vis.selectedSkin.pack.name : SkinLoader.Instance.DefaultSkinName;
-            var poleType = GetPoleType();
+            var poleType = m_poleType; //GetPoleType();
 
             // スキンが変更された場合またはスキンをロードしている最中の場合
             // m_skinOff m_skinNorth m_skinSouthを取得する
@@ -339,8 +373,11 @@ namespace MagnetSpace
                 m_hasChangedMesh = false;
                 m_hasChangedTexture = false;
 
+                //Mod.Log($"{poleType}");
+                SkinLoader.Instance.SendMessagePoleType(IdenticalName, (int)m_poleType);
+
                 #region m_skinOff m_skinNorth m_skinSouthを取得する
-                var modSkinsOff = SkinLoader.Instance.modSkinsOff;
+                var modSkinsOff = SkinLoader.Instance.ModSkinsOff;
                 var modSkinsNorth = SkinLoader.Instance.ModSkinsNorth;
                 var modSkinsSouth = SkinLoader.Instance.ModSkinsSouth;
 
@@ -519,7 +556,7 @@ namespace MagnetSpace
                 }
             }
         }
-        public ValueHandler OnMenuValueChanged;
+        private ValueHandler OnMenuValueChanged;
 
         #region event
         public override void SafeAwake()
@@ -576,19 +613,16 @@ namespace MagnetSpace
 
             #region スキン初期化
             m_vis = GetVisualController();
+            if (IsSimulating)
+            {
+                SkinLoader.Instance.AddSkinVariable(IdenticalName, this);
+            }
             #endregion
         }
         /// <summary>
         /// 見た目を更新する（ビルド中）
         /// </summary>
-        public override void BuildingFixedUpdate()
-        {
-            if (!m_vis)
-            {
-                m_vis = GetVisualController();
-            }
-            SetSkin();
-        }
+        public override void BuildingFixedUpdate() => UpdateSkin();
         /// <summary>
         /// MagnetManagerに自身を登録する
         /// </summary>
@@ -599,7 +633,7 @@ namespace MagnetSpace
         /// <summary>
         /// キー操作を受け付ける
         /// </summary>
-        public override void SimulateUpdateAlways()
+        public override void SimulateUpdateHost()
         {
             // 電磁石でないなら何もしない
             if (!IsElectromagnet)
@@ -657,25 +691,11 @@ namespace MagnetSpace
         /// <summary>
         /// 見た目を更新する（シミュ中/ホスト）
         /// </summary>
-        public override void SimulateFixedUpdateHost()
-        {
-            if (!m_vis)
-            {
-                m_vis = GetVisualController();
-            }
-            SetSkin();
-        }
+        public override void SimulateFixedUpdateHost() => UpdateSkin();
         /// <summary>
-        /// 見た目を更新する（ビルド中/クライアント）
+        /// 見た目を更新する（シミュ中/クライアント）
         /// </summary>
-        public override void SimulateFixedUpdateClient()
-        {
-            if (!m_vis)
-            {
-                m_vis = GetVisualController();
-            }
-            SetSkin();
-        }
+        public override void SimulateUpdateClient() => UpdateSkin();
         public override void OnSimulateStop()
         {
             MagnetManager.Instance.Remove(this);
@@ -686,8 +706,900 @@ namespace MagnetSpace
         public void OnDestroy()
         {
             MagnetManager.Instance.Remove(this);
+            if (IsSimulating)
+            {
+                SkinLoader.Instance.RemoveSkinVariable(IdenticalName);
+            }
+        }
+        #endregion
+    }
+    public class Gaussmeter : BlockModuleBehaviour<GaussmeterModule>, IGaussmeter, ISkinVariable
+    {
+        public int OwnerId => StatMaster.isMP ? Machine.InternalObject.PlayerID : 0;
+        public string BlockName => transform.name.Replace("(Clone)", "");
+        public string IdenticalName => $"{OwnerId.ToString()}-{BlockBehaviour.identifier.ToString()}";
+        public override bool EmulatesAnyKeys => true;
+        /// <summary>
+        /// 計測を始める機能が有効であるかどうか
+        /// </summary>
+        public bool IsValid
+        {
+            get
+            {
+                return !m_toggleActivateByKey.IsActive
+                    || (m_keyActivate.IsHeld || m_isProbingByEmulate);
+            }
+        }
+        /// <summary>
+        /// 極の位置
+        /// </summary>
+        private Transform m_pole;
+        private MKey m_keyActivate;
+        /// <summary>
+        /// 計測を始めるためのキー
+        /// </summary>
+        private MKey[] m_keysActivate;
+        /// <summary>
+        /// キーで計測を行う？
+        /// </summary>
+        private MToggle m_toggleActivateByKey;
+        /// <summary>
+        /// 磁束密度の閾値
+        /// </summary>
+        private MSlider m_sliderThreshold;
+        /// <summary>
+        /// N極側のエミュレーション
+        /// </summary>
+        private MKey m_emulationNorth;
+        /// <summary>
+        /// S極側のエミュレーション
+        /// </summary>
+        private MKey m_emulationSouth;
+        /// <summary>
+        /// 現在の磁性
+        /// </summary>
+        private PoleType m_poleType = PoleType.None;
+        /// <summary>
+        /// 1F前の磁性（スキン用）
+        /// </summary>
+        private PoleType m_lastPoleType = PoleType.None;
+        /// <summary>
+        /// 現在磁束密度を測定している？
+        /// </summary>
+        private bool m_isProbingByEmulate = false;
+
+        /// <summary>
+        /// 磁束密度
+        /// </summary>
+        private float m_density = 0f;
+        /// <summary>
+        /// 1F前の磁束密度
+        /// </summary>
+        private float m_lastDensity = 0f;
+
+        #region skin
+        private BlockVisualController m_vis;
+        private string m_skinName = SkinLoader.Instance.DefaultSkinName;
+        private string m_lastSkinName = "";
+        private string PathOff => "off";
+        private string PathNorth => "north";
+        private string PathSouth => "south";
+        private SkinLoader.SkinDataPack.SkinData m_skinOff;
+        private SkinLoader.SkinDataPack.SkinData m_skinNorth;
+        private SkinLoader.SkinDataPack.SkinData m_skinSouth;
+        private bool m_isLoadingOffSkin = false;
+        private bool m_isLoadingNorthSkin = false;
+        private bool m_isLoadingSouthSkin = false;
+        private bool m_hasChangedMesh = false;
+        private bool m_hasChangedTexture = false;
+        /// <summary>
+        /// 極の状態に応じてMagnetModMeshを与える
+        /// </summary>
+        /// <param name="pole"></param>
+        /// <returns></returns>
+        private SkinLoader.MagnetModMesh GetModMesh(PoleType pole)
+        {
+            switch (pole)
+            {
+                case PoleType.None:
+                default:
+                    return m_skinOff.Mesh;
+                case PoleType.North:
+                    return m_skinNorth.Mesh;
+                case PoleType.South:
+                    return m_skinSouth.Mesh;
+            }
+        }
+        /// <summary>
+        /// 極の状態に応じてMagnetModTextureを与える
+        /// </summary>
+        /// <param name="pole"></param>
+        /// <returns></returns>
+        private SkinLoader.MagnetModTexture GetModTexture(PoleType pole)
+        {
+            switch (pole)
+            {
+                case PoleType.None:
+                default:
+                    return m_skinOff.Texture;
+                case PoleType.North:
+                    return m_skinNorth.Texture;
+                case PoleType.South:
+                    return m_skinSouth.Texture;
+            }
         }
 
+        /// <summary>
+        /// スキンが変更された時のイベント
+        /// </summary>
+        public Action<PoleType> OnSkinChanged = (type) => { };
         #endregion
+
+        #region interface implementation
+        public Vector3 GetPolePosition() => m_pole.position;
+        public Vector3 GetPoleDirection() => m_pole.forward;
+        public float GetMagneticFluxDensity(IMonopole monopole) 
+            => Vector3.Dot(monopole.GetMagneticFluxDensity(GetPolePosition()), GetPoleDirection());
+        private float GetMagneticFluxDensity(params IMonopole[] monopoles)
+        {
+            float density = 0f;
+            foreach (var monopole in monopoles)
+            {
+                density += GetMagneticFluxDensity(monopole);
+            }
+            return density;
+        }
+        private float GetMagneticFluxDensity(List<IMonopole> monopoles) => GetMagneticFluxDensity(monopoles.ToArray());
+        
+        public void SetSkinVariation(int poleType)
+        {
+            if (StatMaster.isHosting) { return; }
+
+            m_poleType = (PoleType)poleType;
+        }
+        #endregion
+
+        /// <summary>
+        /// 磁束密度から極の種類を求める
+        /// 磁束密度が小さい→N極
+        /// 磁束密度が大きい→S極
+        /// </summary>
+        /// <param name="density"></param>
+        /// <param name="threshold"></param>
+        /// <returns></returns>
+        private PoleType GetPoleType(float density, float threshold)
+        {
+            var poleType = PoleType.None;
+            if (density < -threshold)
+            {
+                poleType = PoleType.North;
+            }
+            else if (threshold <= density)
+            {
+                poleType = PoleType.South;
+            }
+            return poleType;
+        }
+        private BlockVisualController GetVisualController() => GetComponent<BlockVisualController>();
+        /// <summary>
+        /// スキンを変更する
+        /// 
+        /// MeshとTextureを変更するタイミング
+        /// - スキンを変更した時
+        /// - PoleTypeを変更した時
+        /// </summary>
+        private void UpdateSkin()
+        {
+            m_skinName = OptionsMaster.skinsEnabled ? m_vis.selectedSkin.pack.name : SkinLoader.Instance.DefaultSkinName;
+            var poleType = m_poleType;
+
+            // スキンが変更された場合またはスキンをロードしている最中の場合
+            // m_skinOff m_skinNorth m_skinSouthを取得する
+            if (m_skinName != m_lastSkinName || poleType != m_lastPoleType ||
+                m_isLoadingNorthSkin || m_isLoadingSouthSkin || m_isLoadingOffSkin)
+            {
+                m_lastSkinName = m_skinName;
+                m_lastPoleType = poleType;
+                m_isLoadingOffSkin = true;
+                m_isLoadingNorthSkin = true;
+                m_isLoadingSouthSkin = true;
+                m_hasChangedMesh = false;
+                m_hasChangedTexture = false;
+
+                //Mod.Log($"{poleType}");
+
+                #region m_skinOff m_skinNorth m_skinSouthを取得する
+                var modSkinsOff = SkinLoader.Instance.ModSkinsOff;
+                var modSkinsNorth = SkinLoader.Instance.ModSkinsNorth;
+                var modSkinsSouth = SkinLoader.Instance.ModSkinsSouth;
+
+                // スキンパックが登録されていなければ登録する
+                if (!modSkinsOff.ContainsKey(m_skinName))
+                {
+                    var skinPack = new SkinLoader.SkinDataPack();
+                    modSkinsOff.Add(m_skinName, skinPack);
+                }
+                // スキンパックが既に登録されている
+                else
+                {
+                    // このブロックのスキンがスキンパックに登録されていれば、それを取得する
+                    if (modSkinsOff[m_skinName].Skins.ContainsKey(BlockName))
+                    {
+                        m_skinOff = modSkinsOff[m_skinName].Skins[BlockName];
+                    }
+
+                    // このブロックのスキンがスキンパックに登録されていない
+                    else
+                    {
+                        // スキンをスキンフォルダからロードしてスキンパックに登録する
+                        var skin = new SkinLoader.SkinDataPack.SkinData();
+                        if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                        {
+                            ModMesh modMesh = (ModMesh)GetResource(Module.MeshOff);
+                            ModTexture modTexture = (ModTexture)GetResource(Module.TextureOff);
+                            skin.SetDefaultSkin(modMesh, modTexture);
+                            m_skinOff = skin;
+                        }
+                        else
+                        {
+                            var path = $"{m_vis.selectedSkin.pack.path}/{BlockName}/{PathOff}/";
+                            var meshPath = $"{path}{BlockName}.obj";
+                            var texturePath = $"{path}{BlockName}.png";
+                            skin.SetSkin(BlockName, meshPath, texturePath);
+                            m_skinOff = skin;
+                        }
+                        modSkinsOff[m_skinName].Skins.Add(BlockName, skin);
+                    }
+
+                    // スキンのロードが終わった
+                    m_isLoadingOffSkin = false;
+                }
+
+                // N極とS極も同じ
+                if (!modSkinsNorth.ContainsKey(m_skinName))
+                {
+                    var skinPack = new SkinLoader.SkinDataPack();
+                    modSkinsNorth.Add(m_skinName, skinPack);
+                }
+                else
+                {
+                    if (modSkinsNorth[m_skinName].Skins.ContainsKey(BlockName))
+                    {
+                        m_skinNorth = modSkinsNorth[m_skinName].Skins[BlockName];
+                    }
+                    else
+                    {
+                        // スキンをスキンフォルダからロードする
+                        var skin = new SkinLoader.SkinDataPack.SkinData();
+                        if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                        {
+                            ModMesh modMesh = (ModMesh)GetResource(Module.MeshNorth);
+                            ModTexture modTexture = (ModTexture)GetResource(Module.TextureNorth);
+                            skin.SetDefaultSkin(modMesh, modTexture);
+                            m_skinNorth = skin;
+                        }
+                        else
+                        {
+                            var path = $"{m_vis.selectedSkin.pack.path}/{BlockName}/{PathNorth}/";
+                            var meshPath = $"{path}{BlockName}.obj";
+                            var texturePath = $"{path}{BlockName}.png";
+                            skin.SetSkin(BlockName, meshPath, texturePath);
+                            m_skinNorth = skin;
+                        }
+                        modSkinsNorth[m_skinName].Skins.Add(BlockName, skin);
+                    }
+                    m_isLoadingNorthSkin = false;
+                }
+                if (!modSkinsSouth.ContainsKey(m_skinName))
+                {
+                    var skinPack = new SkinLoader.SkinDataPack();
+                    modSkinsSouth.Add(m_skinName, skinPack);
+                }
+                else
+                {
+                    if (modSkinsSouth[m_skinName].Skins.ContainsKey(BlockName))
+                    {
+                        m_skinSouth = modSkinsSouth[m_skinName].Skins[BlockName];
+                    }
+                    else
+                    {
+                        // スキンをスキンフォルダからロードする
+                        var skin = new SkinLoader.SkinDataPack.SkinData();
+                        if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                        {
+                            ModMesh modMesh = (ModMesh)GetResource(Module.MeshSouth);
+                            ModTexture modTexture = (ModTexture)GetResource(Module.TextureSouth);
+                            skin.SetDefaultSkin(modMesh, modTexture);
+                            m_skinSouth = skin;
+                        }
+                        else
+                        {
+                            var path = $"{m_vis.selectedSkin.pack.path}/{BlockName}/{PathSouth}/";
+                            var meshPath = $"{path}{BlockName}.obj";
+                            var texturePath = $"{path}{BlockName}.png";
+                            skin.SetSkin(BlockName, meshPath, texturePath);
+                            m_skinSouth = skin;
+                        }
+                        modSkinsSouth[m_skinName].Skins.Add(BlockName, skin);
+                    }
+                    m_isLoadingSouthSkin = false;
+                }
+                #endregion
+            }
+
+            // それ以外。ほぼ毎フレーム呼び出す
+            else
+            {
+                #region null回避
+                if (m_skinOff == null)
+                {
+                    m_skinOff = new SkinLoader.SkinDataPack.SkinData();
+                }
+                if (m_skinNorth == null)
+                {
+                    m_skinNorth = new SkinLoader.SkinDataPack.SkinData();
+                }
+                if (m_skinSouth == null)
+                {
+                    m_skinSouth = new SkinLoader.SkinDataPack.SkinData();
+                }
+                #endregion
+
+                // デフォルトスキン
+                if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                {
+                    // 本体のスキンを適用する
+                    if (!m_hasChangedMesh)
+                    {
+                        GetModMesh(poleType).ApplyToObject(m_vis.MeshFilter);
+                        m_hasChangedMesh = true;
+                    }
+                    if (!m_hasChangedTexture)
+                    {
+                        var tex = GetModTexture(poleType);
+                        tex.ApplyToObject(m_vis.renderers[0]);
+                        m_hasChangedTexture = true;
+                    }
+
+                    // coverに通知する
+                    if (m_hasChangedMesh || m_hasChangedTexture)
+                    {
+                        OnSkinChanged.Invoke(m_poleType);
+                    }
+                }
+
+                // デフォルトでないスキン
+                else
+                {
+                    // 本体のスキンを適用する
+                    var mesh = GetModMesh(poleType);
+                    if (mesh.IsLoaded && !m_hasChangedMesh)
+                    {
+                        if (!mesh.HasError)
+                        {
+                            mesh.ApplyToObject(m_vis.MeshFilter);
+                        }
+                        m_hasChangedMesh = true;
+                    }
+
+                    var tex = GetModTexture(poleType);
+                    if (tex.IsLoaded && !m_hasChangedTexture)
+                    {
+                        if (!tex.HasError)
+                        {
+                            tex.ApplyToObject(m_vis.renderers[0]);
+                        }
+                        m_hasChangedTexture = true;
+                    }
+
+                    // coverに通知する
+                    if (m_hasChangedMesh || m_hasChangedTexture)
+                    {
+                        OnSkinChanged.Invoke(m_poleType);
+                    }
+                }
+            }
+        }
+
+        #region event
+        public override void SafeAwake()
+        {
+            base.SafeAwake();
+
+            #region UI生成
+            try
+            {
+                if (Module.Threshold != null)
+                {
+                    m_sliderThreshold = GetSlider(Module.Threshold);
+                }
+                if (Module.KeyActivate != null)
+                {
+                    m_keyActivate = GetKey(Module.KeyActivate);
+                    m_keysActivate = new MKey[] { m_keyActivate };
+                }
+                if (Module.ToggleActivateByKey != null)
+                {
+                    m_toggleActivateByKey = GetToggle(Module.ToggleActivateByKey);
+                    m_toggleActivateByKey.Toggled += (isActive) =>
+                    {
+                        m_keyActivate.DisplayInMapper = isActive;
+                    };
+                }
+                m_emulationNorth = AddEmulatorKey("Emulate N", "gaussmeter-north", KeyCode.C);
+                m_emulationSouth = AddEmulatorKey("Emulate S", "gaussmeter-south", KeyCode.V);
+            }
+            catch (Exception e)
+            {
+                Mod.Error("Could not get mapper types for Gaussmeter module! module will be destroyed.");
+                Mod.Error($"{e}");
+                Destroy(this);
+                return;
+            }
+            #endregion
+
+            #region pole生成
+            m_pole = new GameObject("Pole").transform;
+            m_pole.parent = transform;
+            m_pole.localPosition = Module.PoleTransform.Position;
+            m_pole.localEulerAngles = Module.PoleTransform.Rotation;
+            m_pole.localScale = Module.PoleTransform.Scale;
+            #endregion
+
+            #region スキン初期化
+            m_vis = GetVisualController();
+            if (IsSimulating)
+            {
+                SkinLoader.Instance.AddSkinVariable(IdenticalName, this);
+            }
+            #endregion
+        }
+        /// <summary>
+        /// 見た目を更新する（ビルド中）
+        /// </summary>
+        public override void BuildingFixedUpdate() => UpdateSkin();
+        /// <summary>
+        /// キー操作を受け付ける
+        /// </summary>
+        public override void SendKeyEmulationUpdateHost()
+        {
+            // 全てのIMonopoleの磁束密度を計算する
+            m_lastDensity = m_density;
+            //m_density = isInvalid ? 0f : GetMagneticFluxDensity(MagnetManager.Instance.Monopoles);
+            m_density = IsValid ? GetMagneticFluxDensity(MagnetManager.Instance.Monopoles) : 0f;
+
+            // PoleTypeを更新する
+            m_poleType = GetPoleType(m_density, m_sliderThreshold.Value);
+
+            // 磁束密度が規定値を前後した時に限り、エミュレーションを変更する
+            // 磁束密度が小さい→North
+            if ((m_sliderThreshold.Value + m_density) * (m_sliderThreshold.Value + m_lastDensity) < 0f)
+            {
+                EmulateKeys(m_keysActivate, m_emulationSouth, m_density < -m_sliderThreshold.Value);
+                SkinLoader.Instance.SendMessagePoleType(IdenticalName, (int)m_poleType);
+            }
+            // 磁束密度が大きい→South
+            if ((m_density - m_sliderThreshold.Value) * (m_lastDensity - m_sliderThreshold.Value) < 0f)
+            {
+                EmulateKeys(m_keysActivate, m_emulationNorth, m_sliderThreshold.Value <= m_density);
+                SkinLoader.Instance.SendMessagePoleType(IdenticalName, (int)m_poleType);
+            }
+        }
+        /// <summary>
+        /// エミュレーションを受け付ける
+        /// </summary>
+        public override void KeyEmulationUpdate()
+        {
+            // キー入力で有効化する場合のみ受け付ける
+            m_isProbingByEmulate = m_keyActivate.EmulationHeld();
+        }
+        /// <summary>
+        /// 見た目を更新する（シミュ中/ホスト）
+        /// </summary>
+        public override void SimulateFixedUpdateHost() => UpdateSkin();
+        /// <summary>
+        /// 見た目を更新する（シミュ中/クライアント）
+        /// </summary>
+        public override void SimulateUpdateClient()
+        {
+            /*
+            // 同期されてる
+            Debug.Log($"IsValid? {IsValid} " +
+                $"(m_toggleActivateByKey.IsActive {m_toggleActivateByKey.IsActive}, " +
+                $"m_keyActivate.IsHeld {m_keyActivate.IsHeld}, " +
+                $"m_isProbingByEmulate {m_isProbingByEmulate})");
+            */
+
+            UpdateSkin();
+        }
+        public void OnDestroy()
+        {
+            if (IsSimulating)
+            {
+                SkinLoader.Instance.RemoveSkinVariable(IdenticalName);
+            }
+        }
+        #endregion
+    }
+    /// <summary>
+    /// Gaussmeterのカバー部分を動作させる
+    /// </summary>
+    public class GaussmeterCover : BlockScript
+    {
+        public string BlockName => transform.name.Replace("(Clone)", "");
+        /// <summary>
+        /// 現在磁束密度計が測定を行っているか
+        /// </summary>
+        public bool IsValid => m_gaussmeter?.IsValid ?? false;
+        /// <summary>
+        /// 無効時のカバーオブジェクトの位置
+        /// </summary>
+        public Vector3 PositionInvalid = new Vector3(0f, 0f, 0.8f);
+        /// <summary>
+        /// 有効時のカバーオブジェクトの位置
+        /// </summary>
+        public Vector3 PositionValid = new Vector3(0f, 0f, 1.3f);
+        /// <summary>
+        /// 磁束密度計
+        /// </summary>
+        private Gaussmeter m_gaussmeter;
+        /// <summary>
+        /// カバー部分のTransform
+        /// </summary>
+        private Transform m_coverTransform;
+        private MeshRenderer m_renderer;
+        private MeshFilter m_filter;
+        /// <summary>
+        /// 媒介変数
+        /// </summary>
+        private float m_parameter = 0f;
+        /// <summary>
+        /// 媒介変数（0~1）
+        /// </summary>
+        public float Parameter
+        {
+            get => m_parameter;
+            set => m_parameter = Mathf.Clamp(value, 0f, 1f);
+        }
+        public float DiffParameterByFrame = 0.05f;
+        /// <summary>
+        /// 媒介変数を元にした値
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public delegate float ParameterFunc(float t);
+        private ParameterFunc m_parameterFunc = (x => x);
+        /// <summary>
+        /// パラメータを引数とする三角関数
+        /// </summary>
+        /// <param name="t">媒介変数: 0->0、1->pi/2</param>
+        /// <returns></returns>
+        public float ParameterSin(float t)
+        {
+            float theta = t * Mathf.PI / 2f;
+            return Mathf.Sin(theta);
+        }
+
+        #region skin
+        private BlockVisualController m_vis;
+        private string m_skinName = SkinLoader.Instance.DefaultSkinName;
+        private string m_lastSkinName = "";
+        private string PathOff => "cover/off";
+        private string PathNorth => "cover/north";
+        private string PathSouth => "cover/south";
+        private SkinLoader.SkinDataPack.SkinData m_skinOff; // <= TODO これをoff north southに分ける
+        private SkinLoader.SkinDataPack.SkinData m_skinNorth;
+        private SkinLoader.SkinDataPack.SkinData m_skinSouth;
+        private bool m_isLoadingSkinOff = false;
+        private bool m_isLoadingSkinNorth = false;
+        private bool m_isLoadingSkinSouth = false;
+        private bool m_hasChangedMesh = false;
+        private bool m_hasChangedTexture = false;
+        /// <summary>
+        /// 1F前の磁性（スキン用）
+        /// </summary>
+        private PoleType m_lastPoleType = PoleType.None;
+
+        /// <summary>
+        /// 極の状態に応じてMagnetModMeshを与える
+        /// </summary>
+        /// <param name="pole"></param>
+        /// <returns></returns>
+        private SkinLoader.MagnetModMesh GetModMesh(PoleType pole)
+        {
+            switch (pole)
+            {
+                case PoleType.None:
+                default:
+                    return m_skinOff.Mesh;
+                case PoleType.North:
+                    return m_skinNorth.Mesh;
+                case PoleType.South:
+                    return m_skinSouth.Mesh;
+            }
+        }
+        /// <summary>
+        /// 極の状態に応じてMagnetModTextureを与える
+        /// </summary>
+        /// <param name="pole"></param>
+        /// <returns></returns>
+        private SkinLoader.MagnetModTexture GetModTexture(PoleType pole)
+        {
+            switch (pole)
+            {
+                case PoleType.None:
+                default:
+                    return m_skinOff.Texture;
+                case PoleType.North:
+                    return m_skinNorth.Texture;
+                case PoleType.South:
+                    return m_skinSouth.Texture;
+            }
+        }
+        /// <summary>
+        /// スキンを変更する
+        /// 
+        /// MeshとTextureを変更するタイミング
+        /// - スキンを変更した時
+        /// </summary>
+        private void UpdateSkin(PoleType poleType)
+        {
+            m_skinName = OptionsMaster.skinsEnabled ? m_vis.selectedSkin.pack.name : SkinLoader.Instance.DefaultSkinName;
+
+            // スキンが変更された場合またはスキンをロードしている最中の場合
+            // m_skinOff m_skinNorth m_skinSouthを取得する
+            if (m_skinName != m_lastSkinName || poleType != m_lastPoleType
+                || m_isLoadingSkinOff || m_isLoadingSkinNorth || m_isLoadingSkinSouth)
+            {
+                //Mod.Log("test 0");
+                m_lastSkinName = m_skinName;
+                m_isLoadingSkinOff = true;
+                m_isLoadingSkinNorth = true;
+                m_isLoadingSkinSouth = true;
+                m_hasChangedMesh = false;
+                m_hasChangedTexture = false;
+                m_lastPoleType = poleType;
+
+                var modSkinsCover = SkinLoader.Instance.ModSkinsCover;
+                var modSkinsNorth = SkinLoader.Instance.ModSkinsCoverNorth;
+                var modSkinsSouth = SkinLoader.Instance.ModSkinsCoverSouth;
+
+                // スキンパックが登録されていなければ登録する
+                if (!modSkinsCover.ContainsKey(m_skinName))
+                {
+                    var skinPack = new SkinLoader.SkinDataPack();
+                    modSkinsCover.Add(m_skinName, skinPack);
+                }
+                // スキンパックが既に登録されている
+                else
+                {
+                    // このブロックのスキンがスキンパックに登録されていれば、それを取得する
+                    if (modSkinsCover[m_skinName].Skins.ContainsKey(BlockName))
+                    {
+                        m_skinOff = modSkinsCover[m_skinName].Skins[BlockName];
+                    }
+
+                    // このブロックのスキンがスキンパックに登録されていない
+                    else
+                    {
+                        // スキンをスキンフォルダからロードしてスキンパックに登録する
+                        var skin = new SkinLoader.SkinDataPack.SkinData();
+                        if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                        {
+                            skin.SetDefaultSkin(
+                                ModResource.GetMesh("gaussmeter-cover"),
+                                ModResource.GetTexture("gaussmeter-cover-off")
+                                );
+                            m_skinOff = skin;
+                        }
+                        else
+                        {
+                            var path = $"{m_vis.selectedSkin.pack.path}/{BlockName}/{PathOff}/";
+                            var meshPath = $"{path}{BlockName}.obj";
+                            var texturePath = $"{path}{BlockName}.png";
+                            skin.SetSkin(BlockName, meshPath, texturePath);
+                            m_skinOff = skin;
+                        }
+                        modSkinsCover[m_skinName].Skins.Add(BlockName, skin);
+                    }
+
+                    // スキンのロードが終わった
+                    m_isLoadingSkinOff = false;
+                }
+
+                // N極とS極も同じ
+                if (!modSkinsNorth.ContainsKey(m_skinName))
+                {
+                    var skinPack = new SkinLoader.SkinDataPack();
+                    modSkinsNorth.Add(m_skinName, skinPack);
+                }
+                else
+                {
+                    if (modSkinsNorth[m_skinName].Skins.ContainsKey(BlockName))
+                    {
+                        m_skinNorth = modSkinsNorth[m_skinName].Skins[BlockName];
+                    }
+                    else
+                    {
+                        // スキンをスキンフォルダからロードする
+                        var skin = new SkinLoader.SkinDataPack.SkinData();
+                        if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                        {
+                            skin.SetDefaultSkin(
+                                ModResource.GetMesh("gaussmeter-cover"),
+                                ModResource.GetTexture("gaussmeter-cover-n")
+                                );
+                            m_skinNorth = skin;
+                        }
+                        else
+                        {
+                            var path = $"{m_vis.selectedSkin.pack.path}/{BlockName}/{PathNorth}/";
+                            var meshPath = $"{path}{BlockName}.obj";
+                            var texturePath = $"{path}{BlockName}.png";
+                            skin.SetSkin(BlockName, meshPath, texturePath);
+                            m_skinNorth = skin;
+                        }
+                        modSkinsNorth[m_skinName].Skins.Add(BlockName, skin);
+                    }
+                    m_isLoadingSkinNorth = false;
+                }
+                if (!modSkinsSouth.ContainsKey(m_skinName))
+                {
+                    var skinPack = new SkinLoader.SkinDataPack();
+                    modSkinsSouth.Add(m_skinName, skinPack);
+                }
+                else
+                {
+                    if (modSkinsSouth[m_skinName].Skins.ContainsKey(BlockName))
+                    {
+                        m_skinSouth = modSkinsSouth[m_skinName].Skins[BlockName];
+                    }
+                    else
+                    {
+                        // スキンをスキンフォルダからロードする
+                        var skin = new SkinLoader.SkinDataPack.SkinData();
+                        if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                        {
+                            skin.SetDefaultSkin(
+                                ModResource.GetMesh("gaussmeter-cover"),
+                                ModResource.GetTexture("gaussmeter-cover-s")
+                                );
+                            m_skinSouth = skin;
+                        }
+                        else
+                        {
+                            var path = $"{m_vis.selectedSkin.pack.path}/{BlockName}/{PathSouth}/";
+                            var meshPath = $"{path}{BlockName}.obj";
+                            var texturePath = $"{path}{BlockName}.png";
+                            skin.SetSkin(BlockName, meshPath, texturePath);
+                            m_skinSouth = skin;
+                        }
+                        modSkinsSouth[m_skinName].Skins.Add(BlockName, skin);
+                    }
+                    m_isLoadingSkinSouth = false;
+                }
+
+            }
+
+            // それ以外。ほぼ毎フレーム呼び出す
+            else
+            {
+                if (m_skinOff == null) { m_skinOff = new SkinLoader.SkinDataPack.SkinData(); }
+                if (m_skinNorth == null) { m_skinNorth = new SkinLoader.SkinDataPack.SkinData(); }
+                if (m_skinSouth == null) { m_skinSouth = new SkinLoader.SkinDataPack.SkinData(); }
+
+                // デフォルトスキン
+                if (m_skinName == SkinLoader.Instance.DefaultSkinName)
+                {
+                    // 本体のスキンを適用する
+                    if (!m_hasChangedMesh)
+                    {
+                        GetModMesh(poleType).ApplyToObject(m_filter);
+                        m_hasChangedMesh = true;
+                        //Mod.Log($"apply skin to {m_skinOff.Path}");
+                    }
+                    if (!m_hasChangedTexture)
+                    {
+                        GetModTexture(poleType).ApplyToObject(m_renderer);
+                        m_hasChangedTexture = true;
+                    }
+                }
+
+                // デフォルトでないスキン
+                else
+                {
+                    // 本体のスキンを適用する
+                    var mesh = GetModMesh(poleType);
+                    if (mesh.IsLoaded && !m_hasChangedMesh)
+                    {
+                        if (!mesh.HasError)
+                        {
+                            mesh.ApplyToObject(m_filter);
+                        }
+                        m_hasChangedMesh = true;
+                    }
+
+                    var tex = GetModTexture(poleType);
+                    if (tex.IsLoaded && !m_hasChangedTexture)
+                    {
+                        if (!tex.HasError)
+                        {
+                            tex.ApplyToObject(m_renderer);
+                        }
+                        m_hasChangedTexture = true;
+                    }
+                }
+            }
+        }
+        private void UpdateCoverPos(float param)
+        {
+            if (param == 0f) { m_coverTransform.localPosition = PositionInvalid; }
+            else if (param == 1f) { m_coverTransform.localPosition = PositionValid; }
+            else
+            {
+                m_coverTransform.localPosition
+                    = Vector3.Lerp(PositionInvalid, PositionValid, m_parameterFunc(param));
+            }
+        }
+        #endregion
+
+        public override void SafeAwake()
+        {
+            // コンポーネント取得
+            m_gaussmeter = GetComponent<Gaussmeter>();
+
+            // カバー部分の生成
+            if (!IsSimulating)
+            {
+                m_coverTransform = new GameObject("Cover").transform;
+                m_coverTransform.parent = transform;
+                m_coverTransform.localPosition = PositionInvalid;
+                m_coverTransform.localRotation = Quaternion.identity;
+                m_coverTransform.localScale = Vector3.one;
+            }
+            else
+            {
+                m_coverTransform = transform.FindChild("Cover");
+            }
+            // コンポーネントのアタッチ
+            m_renderer = m_coverTransform.GetComponent<MeshRenderer>() ?? m_coverTransform.gameObject.AddComponent<MeshRenderer>();
+            m_filter = m_coverTransform.GetComponent<MeshFilter>()
+                ?? m_coverTransform.gameObject.AddComponent<MeshFilter>();
+            //Debug.Log($"m_filter exist?: {m_filter != null}");
+
+            // メッシュとテクスチャの読み込みと割り当て
+            m_vis = GetComponent<BlockVisualController>();
+
+            // マテリアルのシェーダをブロックからコピーする
+            m_renderer.material = m_vis.renderers[0].material;
+
+            // 計算用の関数の設定
+            m_parameterFunc = ParameterSin;
+        }
+        public override void BuildingFixedUpdate()
+        {
+            UpdateSkin(PoleType.None);
+        }
+        public override void OnSimulateStart()
+        {
+            base.OnSimulateStart();
+            m_gaussmeter = GetComponent<Gaussmeter>();
+            m_gaussmeter.OnSkinChanged += (type) =>
+            {
+                UpdateSkin(type);
+            };
+        }
+        public override void SimulateFixedUpdateHost()
+        {
+            // パラメータを更新してカバーの位置を変更する
+            Parameter += (IsValid ? 1f : -1f) * DiffParameterByFrame;
+            UpdateCoverPos(Parameter);
+        }
+        public override void SimulateUpdateClient()
+        {
+            // パラメータを更新してカバーの位置を変更する
+            Parameter += (IsValid ? 1f : -1f) * DiffParameterByFrame;
+            UpdateCoverPos(Parameter);
+        }
     }
 }

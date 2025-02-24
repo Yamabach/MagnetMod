@@ -9,7 +9,7 @@
 	<Name>Magnet</Name>
 	<Author>Yamabach</Author> <!-- FIX: Insert your name here. -->
 	<!-- Major.Minor.Build -->
-	<Version>1.0.0</Version>
+	<Version>1.1.0</Version>
 	
 	<Description>
 Add an original magnetic system and magnetic blocks specified by custom module.
@@ -88,6 +88,7 @@ Add an original magnetic system and magnetic blocks specified by custom module.
 		<!-- <Block path="TestMagnet.xml" /> -->
 		<Block path="NaturalMagnet.xml" /> <!-- 10 -->
 		<Block path="Electromagnet.xml" /> <!-- 20 -->
+		<Block path="Gaussmeter.xml" />    <!-- 30 -->
 	</Blocks>
 	
 	<!-- Any entities (level objects) your mod adds to the game.
@@ -140,6 +141,17 @@ Add an original magnetic system and magnetic blocks specified by custom module.
 		<Texture name="electromagnet-off" path="electromagnet_off.png"/>
 		<Texture name="electromagnet-n" path="electromagnet_n.png"/>
 		<Texture name="electromagnet-s" path="electromagnet_s.png"/>
+		
+		<!-- gaussmeter -->
+		<Mesh name="gaussmeter" path="gaussmeter.obj" />
+		<Texture name="gaussmeter-off" path="TEX_gaussmeter_black_2.png" />
+		<Texture name="gaussmeter-n" path="TEX_gaussmeter_red_2.png" />
+		<Texture name="gaussmeter-s" path="TEX_gaussmeter_blue_2.png" />
+		<!-- gaussmeter cover -->
+		<Mesh name="gaussmeter-cover" path="gaussmeter_move.obj" />
+		<Texture name="gaussmeter-cover-off" path="TEX_gaussmeter_black_2.png" />
+		<Texture name="gaussmeter-cover-n" path="TEX_gaussmeter_red_2.png" />
+		<Texture name="gaussmeter-cover-s" path="TEX_gaussmeter_blue_2.png" />
 	</Resources>
 
 

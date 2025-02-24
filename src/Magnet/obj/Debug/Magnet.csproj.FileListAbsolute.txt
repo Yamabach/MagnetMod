@@ -22,3 +22,4 @@ C:\Program Files (x86)\Steam\steamapps\common\Besiege\Besiege_Data\Mods\Magnet P
 C:\Program Files (x86)\Steam\steamapps\common\Besiege\Besiege_Data\Mods\Magnet Project\src\Magnet\obj\Debug\Magnet.csproj.Up2Date
 C:\Program Files (x86)\Steam\steamapps\common\Besiege\Besiege_Data\Mods\Magnet Project\src\Magnet\obj\Debug\Magnet.dll
 C:\Program Files (x86)\Steam\steamapps\common\Besiege\Besiege_Data\Mods\Magnet Project\src\Magnet\obj\Debug\Magnet.pdb
+C:\Program Files (x86)\Steam\steamapps\common\Besiege\Besiege_Data\Mods\Magnet Project\src\Magnet\bin\Debug\UnityEngine.xml
